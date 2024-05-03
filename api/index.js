@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import path from 'path';
 import WebSocket,{ WebSocketServer }  from 'ws';
 import http from 'http';
+import axios from 'axios';
 
 
 dotenv.config();
@@ -36,6 +37,11 @@ server.listen(3000, () => {
 });
 
 app.use('/api/products', productRoutes);
+
+app.get('/ping',(req,res)=>{
+  res.send("pong");
+})
+// const ping = await axios.get('/ping');
 
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
