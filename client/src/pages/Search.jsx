@@ -133,7 +133,7 @@ export default function Search() {
       {/* Products Section */}
 
       <div className='w-full'>
-        <div className='p-7 flex flex-wrap gap-2'>
+        <div className='p-3 flex flex-wrap gap-2'>
           {!loading && products.length === 0 && (
             <p className='text-xl text-gray-500'>No posts found.</p>
           )}
