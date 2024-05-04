@@ -126,12 +126,7 @@ export default function DashComments() {
       ) : (
         <p>You have no comments yet!</p>
       )}
-      <Modal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        popup
-        size='md'
-      >
+      <Modal show={showModal} onClose={() => setShowModal(false)} popup size='md'>
         <Modal.Header />
         <Modal.Body>
           <div className='text-center'>
