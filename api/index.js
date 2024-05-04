@@ -41,7 +41,16 @@ app.use('/api/products', productRoutes);
 app.get('/ping',(req,res)=>{
   res.send("pong");
 })
-// const ping = await axios.get('/ping');
+
+// setInterval(async () => {
+//   try {
+//     const ping = await axios.get('https://websrapper-render.onrender.com/ping');
+//     // console.log(ping.data);
+//   } catch (error) {
+//     console.error('Error fetching ping:', error);
+//   }
+// }, 45*1000); 
+
 
 app.use(express.static(path.join(__dirname, '/client/dist')));
 
