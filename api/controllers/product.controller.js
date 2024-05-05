@@ -76,11 +76,14 @@ async function getComparisonEngine(req, collectionName, limit1) {
     const mainCategory = req.query.mainCategoryName.split(',').map(value => value.trim());
     const regexPattern = mainCategory.join('|');
     const mainCategoryQuery = { mainCategoryName: { $regex: regexPattern, $options: 'i' } };
-    let mainCategoryNames= await collectionName.distinct("mainCategoryName", mainCategoryQuery);   
+    let mainCategoryNames= await collectionName.distinct("mainCategoryName", mainCategoryQuery);
+    console.log("Main mainCategoryName from query String: ", req.query.mainCategoryName);
+    console.log("Main mainCategoryName After parsed in Array: ", mainCategory);
+    console.log("getting the distinct mainCategoryNames:", mainCategoryNames);
     const productPrice = Number(req.query.productPrice);
     let query = {
     ...(req.query.productPrice && { productPrice: { $lte: productPrice } }),
-    ...(req.query.productPrice && { mainCategoryName:mainCategoryNames[0]} )
+    ...(req.query.mainCategoryName && { mainCategoryName:mainCategoryNames[0]} )
     };    
     let products = await collectionName.find(query).sort({ productPrice: 1 })
     

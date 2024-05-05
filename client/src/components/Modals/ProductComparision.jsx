@@ -5,6 +5,7 @@ import PostCard from '../PostCard';
 
 export default function ProductComparisionModal({ post, showModal,  setShowModal}) {
 
+    console.log(post);
     const [comparisonProducts, setComparisonProducts]=useState([]);
     const [loading, setLoading]=useState(false);
     const searchTerm=post.productTitle;
