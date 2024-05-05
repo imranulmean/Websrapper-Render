@@ -5,7 +5,7 @@ import PostCard from '../components/PostCard';
 
 export default function Search() {
 
-  const getAllProductsUrl='/api/products/getAllProducts';
+  const getSearchProductsUrl='/api/search/getSearchProducts';
   const [sidebarData, setSidebarData] = useState({
     searchTerm: '',
     sort: 'desc',
@@ -37,7 +37,7 @@ export default function Search() {
     const fetchPosts = async () => {
       setLoading(true);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`${getAllProductsUrl}?${searchQuery}`);
+      const res = await fetch(`${getSearchProductsUrl}?${searchQuery}`);
       if (!res.ok) {
         setLoading(false);
         return;
@@ -86,7 +86,7 @@ export default function Search() {
     const urlParams = new URLSearchParams(location.search);
     urlParams.set('startIndex', startIndex);
     const searchQuery = urlParams.toString();
-    const res = await fetch(`${getAllProductsUrl}?${searchQuery}`);
+    const res = await fetch(`${getSearchProductsUrl}?${searchQuery}`);
     if (!res.ok) {
       return;
     }

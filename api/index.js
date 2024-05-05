@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import productRoutes from './routes/product.route.js';
+import searchProductRoutes from './routes/search.route.js';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import WebSocket,{ WebSocketServer }  from 'ws';
@@ -37,7 +38,7 @@ server.listen(3000, () => {
 });
 
 app.use('/api/products', productRoutes);
-
+app.use('/api/search', searchProductRoutes);
 app.get('/ping',(req,res)=>{
   res.send("pong");
 })
