@@ -67,23 +67,25 @@ export const getWoolsProducts = async (req, res, next) => {
   }
 };
 
-
-
+async function getMainCategories(req, collectionName){
+  const parsedMainCategory = req.query.mainCategoryName.split(',').map(value => value.trim());
+  console.log("mainCategoryName from query String: ", req.query.mainCategoryName);
+  console.log("parsedMainCategory : ", parsedMainCategory);  
+  const regexPattern = parsedMainCategory.join('|');
+  const mainCategoryQuery = { mainCategoryName: { $regex: regexPattern, $options: 'i' } };
+  let distinctMainCategoryNames= await collectionName.distinct("mainCategoryName", mainCategoryQuery);
+  console.log("distinctMainCategoryNames: ",distinctMainCategoryNames)
+  return distinctMainCategoryNames
+}
 
 async function getComparisonEngine(req, collectionName, limit1) {
   try {
     let searchTerm = req.query.searchTerm || '';
-    const mainCategory = req.query.mainCategoryName.split(',').map(value => value.trim());
-    const regexPattern = mainCategory.join('|');
-    const mainCategoryQuery = { mainCategoryName: { $regex: regexPattern, $options: 'i' } };
-    let mainCategoryNames= await collectionName.distinct("mainCategoryName", mainCategoryQuery);
-    console.log("Main mainCategoryName from query String: ", req.query.mainCategoryName);
-    console.log("Main mainCategoryName After parsed in Array: ", mainCategory);
-    console.log("getting the distinct mainCategoryNames:", mainCategoryNames);
     const productPrice = Number(req.query.productPrice);
+    let mainCategoryNames=await getMainCategories(req, collectionName)
     let query = {
     ...(req.query.productPrice && { productPrice: { $lte: productPrice } }),
-    ...(req.query.mainCategoryName && { mainCategoryName:mainCategoryNames[0]} )
+    ...(req.query.mainCategoryName && { mainCategoryName:{$in:mainCategoryNames}} )
     };    
     let products = await collectionName.find(query).sort({ productPrice: 1 })
     
