@@ -36,7 +36,6 @@ import { errorHandler } from '../utils/error.js';
       // Generate combinations of search terms
       const combinationArray = generateCombinations(searchTerms);
       const regexPatterns = combinationArray.map(combination => new RegExp(combination.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i'));
-      console.log(regexPatterns);
         query.$or = regexPatterns.map(pattern => ({ productTitle: { $regex: pattern } }))
     }
     
