@@ -1,7 +1,8 @@
 import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 
-
+const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
+                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink"]
 
 async function getProducts(req, collectionName, limit1) {
   try {
@@ -81,15 +82,30 @@ async function getMainCategories(req, collectionName){
 async function getComparisonEngine(req, collectionName, limit1) {
   try {
     let searchTerm = req.query.searchTerm || '';
-    const productPrice = Number(req.query.productPrice);
-    let mainCategoryNames=await getMainCategories(req, collectionName)
-    let query = {
-    ...(req.query.productPrice && { productPrice: { $lte: productPrice } }),
-    ...(req.query.mainCategoryName && { mainCategoryName:{$in:mainCategoryNames}} )
-    };    
-    let products = await collectionName.find(query).sort({ productPrice: 1 })
+    /////////////Using the Predicted Category ///////////
+      const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
+      // Matching the pattern in the product name
+      const matchCategories = searchTerm.match(predictedCategoriesRegex);
+      const regexPattern = new RegExp(matchCategories.join('|'), 'gi'); 
+      const productPrice = Number(req.query.productPrice);
+      let query = {
+        ...(req.query.productPrice && { productPrice: { $lte: productPrice } }),
+        ...(req.query.searchTerm && { productTitle:{$regex: regexPattern}} )
+        };    
+        let products = await collectionName.find(query).sort({ productPrice: 1 })
+        
+        return { products };      
+    //////////////////////
+
+    // const productPrice = Number(req.query.productPrice);
+    // let mainCategoryNames=await getMainCategories(req, collectionName)
+    // let query = {
+    // ...(req.query.productPrice && { productPrice: { $lte: productPrice } }),
+    // ...(req.query.mainCategoryName && { mainCategoryName:{$in:mainCategoryNames}} )
+    // };    
+    // let products = await collectionName.find(query).sort({ productPrice: 1 })
     
-    return { products };
+    // return { products };
   } catch (error) {
     throw error;
   }
@@ -126,7 +142,7 @@ export const getComparisonProducts = async (req, res, next) => {
         // console.log("searchTerm: ", req.query.searchTerm)
         // console.log("Current Name: ", parsedProduct.productTitle)
         // console.log("matchingPercentage: ", matchingPercentage)
-        if (matchingPercentage > 40) {
+        if (matchingPercentage > 33) {
             finalProducts.push(product1);
         }
       });
