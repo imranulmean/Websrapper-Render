@@ -70,12 +70,9 @@ export const getWoolsProducts = async (req, res, next) => {
 
 async function getMainCategories(req, collectionName){
   const parsedMainCategory = req.query.mainCategoryName.split(',').map(value => value.trim());
-  console.log("mainCategoryName from query String: ", req.query.mainCategoryName);
-  console.log("parsedMainCategory : ", parsedMainCategory);  
   const regexPattern = parsedMainCategory.join('|');
   const mainCategoryQuery = { mainCategoryName: { $regex: regexPattern, $options: 'i' } };
   let distinctMainCategoryNames= await collectionName.distinct("mainCategoryName", mainCategoryQuery);
-  console.log("distinctMainCategoryNames: ",distinctMainCategoryNames)
   return distinctMainCategoryNames
 }
 
@@ -84,7 +81,6 @@ async function getComparisonEngine(req, collectionName, limit1) {
     let searchTerm = req.query.searchTerm || '';
     /////////////Using the Predicted Category ///////////
       const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
-      // Matching the pattern in the product name
       const matchCategories = searchTerm.match(predictedCategoriesRegex);
       const regexPattern = new RegExp(matchCategories.join('|'), 'gi'); 
       const productPrice = Number(req.query.productPrice);

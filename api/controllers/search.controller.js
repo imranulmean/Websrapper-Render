@@ -1,7 +1,8 @@
 import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 
-
+const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
+                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink"]
 
  function generateCombinations(words) {
     let combinations = [];
@@ -21,24 +22,91 @@ import { errorHandler } from '../utils/error.js';
     }    
     return combinations;
   }
+
+
+  function findClosestMatch(input) {
+    let closestMatch = null;
+    let minDistance = Infinity;
+
+    // Iterate over predicted categories to find the closest match
+    predictedCategories.forEach(category => {
+        const distance = levenshteinDistance(category.toLowerCase(), input.toLowerCase());
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestMatch = category;
+        }
+    });
+
+    return closestMatch;
+}
+
+function levenshteinDistance(a, b) {
+    const distanceMatrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
+
+    for (let i = 0; i <= a.length; i++) {
+        distanceMatrix[0][i] = i;
+    }
+
+    for (let j = 0; j <= b.length; j++) {
+        distanceMatrix[j][0] = j;
+    }
+
+    for (let j = 1; j <= b.length; j++) {
+        for (let i = 1; i <= a.length; i++) {
+            const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
+            distanceMatrix[j][i] = Math.min(
+                distanceMatrix[j][i - 1] + 1, // Deletion
+                distanceMatrix[j - 1][i] + 1, // Insertion
+                distanceMatrix[j - 1][i - 1] + indicator // Substitution
+            );
+        }
+    }
+
+    return distanceMatrix[b.length][a.length];
+}
+
   
   async function advanceSearchEngine(req, collectionName, limit, startIndex){
-    let query = {
-      ...(req.query.mainCategoryName && { mainCategoryName: req.query.mainCategoryName }),
-      ...(req.query.subCategoryName && { subCategoryName: req.query.subCategoryName }),
-      ...(req.query.shop && { shop: req.query.shop }),
-    };
+    // let query = {
+    //   ...(req.query.mainCategoryName && { mainCategoryName: req.query.mainCategoryName }),
+    //   ...(req.query.subCategoryName && { subCategoryName: req.query.subCategoryName }),
+    //   ...(req.query.shop && { shop: req.query.shop }),
+    // };
   // Check if a search term is provided
-    if (req.query.searchTerm) {
-       let searchTerm = req.query.searchTerm;      
-      // Split the search term into individual words
-      const searchTerms = searchTerm.split(' ').filter(word => word.trim() !== '');
-      // Generate combinations of search terms
-      const combinationArray = generateCombinations(searchTerms);
-      const regexPatterns = combinationArray.map(combination => new RegExp(combination.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i'));
-        query.$or = regexPatterns.map(pattern => ({ productTitle: { $regex: pattern } }))
-    }
+    // if (req.query.searchTerm) {
+    //    let searchTerm = req.query.searchTerm;      
+    //   // Split the search term into individual words
+    //   const searchTerms = searchTerm.split(' ').filter(word => word.trim() !== '');
+    //   // Generate combinations of search terms
+    //   const combinationArray = generateCombinations(searchTerms);
+    //   const regexPatterns = combinationArray.map(combination => new RegExp(combination.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i'));
+    //     query.$or = regexPatterns.map(pattern => ({ productTitle: { $regex: pattern } }))
+    // }
     
+    //////////Using Predicted Categories////////////
+      let searchTerm = req.query.searchTerm || '';
+      const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
+      let matchCategories = searchTerm.match(predictedCategoriesRegex);
+      console.log("Search Term:", searchTerm)
+      console.log("First getting the matchCategories:", matchCategories)
+      if(!matchCategories || matchCategories==null){
+        matchCategories=[];        
+        matchCategories.push(findClosestMatch(searchTerm));
+        console.log("Second getting the matchCategories:", matchCategories)
+      }
+      const regexPattern = new RegExp(matchCategories.join('|'), 'gi');   
+      let query = {
+        ...(req.query.mainCategoryName && { mainCategoryName: req.query.mainCategoryName }),
+        ...(req.query.subCategoryName && { subCategoryName: req.query.subCategoryName }),
+        ...(req.query.shop && { shop: req.query.shop }),
+        ...(req.query.searchTerm && {
+          $or: [
+            { productTitle: { $regex: regexPattern } }
+          ],
+        }),
+      };
+    /////////////////////////
+
     let products = await collectionName.find(query)
       .sort({ productTitle: 1 })
       .skip(startIndex)
