@@ -85,7 +85,7 @@ async function getComparisonEngine(req, collectionName, limit1) {
       const regexPattern = new RegExp(matchCategories.join('|'), 'gi'); 
       const productPrice = Number(req.query.productPrice);
       let query = {
-        ...(req.query.productPrice && { productPrice: { $lte: productPrice } }),
+        ...(req.query.productPrice && { productPrice: { $lt: productPrice } }),
         ...(req.query.searchTerm && { productTitle:{$regex: regexPattern}} )
         };    
         let products = await collectionName.find(query).sort({ productPrice: 1 })
