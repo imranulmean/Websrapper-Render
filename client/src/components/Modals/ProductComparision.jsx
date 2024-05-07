@@ -2,8 +2,11 @@ import { Link } from 'react-router-dom';
 import { Modal, Button, Spinner } from 'flowbite-react';
 import { useState } from 'react';
 import PostCard from '../PostCard';
+import { useCart } from '../../context/CartContext';
+
 
 export default function ProductComparisionModal({ post, showModal,  setShowModal}) {   
+    const { addItemToCart } = useCart();
     const [comparisonProducts, setComparisonProducts]=useState([]);
     const [loading, setLoading]=useState(false);
     const searchTerm=post.productTitle;
@@ -25,9 +28,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
     }
 
     const addToCart = (item) => {
-        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        cartItems.push(item);
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        addItemToCart(item);
         alert("Added to cart")
     };
 

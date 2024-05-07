@@ -7,8 +7,11 @@ import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/userSlice';
 import { useEffect, useState } from 'react';
 import CartComponent from './CartComponent';
+import { useCart } from '../context/CartContext';
+
 
 export default function Header() {
+  const {cartItemsContext} =useCart();
   const path = useLocation().pathname;
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,16 +31,16 @@ export default function Header() {
       setSearchTerm(searchTermFromUrl);
     }
   }, [location.search]);
-  useEffect(()=>{
-      localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-      console.log(localStorageCartItems);
-      setCartItems(localStorageCartItems);        
-  },[])
-  useEffect(()=>{
-    localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    console.log(localStorageCartItems);
-    setCartItems(localStorageCartItems);        
-  },[isOpen])
+  // useEffect(()=>{
+  //     localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+  //     console.log(localStorageCartItems);
+  //     setCartItems(localStorageCartItems);        
+  // },[])
+  // useEffect(()=>{
+  //   localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+  //   console.log(localStorageCartItems);
+  //   setCartItems(localStorageCartItems);        
+  // },[isOpen])
 
   const handleSignout = async () => {
     try {
@@ -82,8 +85,8 @@ export default function Header() {
             <AiOutlineSearch />
           </button>
       </form>
-      <Button onClick={()=>setIsOpen(true)} size="sm" color="light"><FaShoppingCart /><Badge color="gray">{cartItems.length}</Badge></Button>
-      <CartComponent isOpen={isOpen} setIsOpen={setIsOpen} cartItems={cartItems} setCartItems={setCartItems}/>
+      <Button onClick={()=>setIsOpen(true)} size="sm" color="light"><FaShoppingCart /><Badge color="gray">{cartItemsContext.length}</Badge></Button>
+      <CartComponent isOpen={isOpen} setIsOpen={setIsOpen} />
       {/* <Button className='w-12 h-10 lg:hidden' color='gray' pill>
         <AiOutlineSearch />
       </Button> */}
