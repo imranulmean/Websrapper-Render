@@ -1,7 +1,7 @@
-import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
+import { Avatar, Button, Dropdown, Navbar, TextInput, Badge } from 'flowbite-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { FaMoon, FaSun, FaBell } from 'react-icons/fa';
+import { FaMoon, FaSun, FaBell, FaShoppingCart } from 'react-icons/fa';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/userSlice';
@@ -17,6 +17,9 @@ export default function Header() {
   const { theme } = useSelector((state) => state.theme);
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false)
+  const [cartItems, setCartItems]=useState([]);
+  let localStorageCartItems;
+
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -25,6 +28,16 @@ export default function Header() {
       setSearchTerm(searchTermFromUrl);
     }
   }, [location.search]);
+  useEffect(()=>{
+      localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+      console.log(localStorageCartItems);
+      setCartItems(localStorageCartItems);        
+  },[])
+  useEffect(()=>{
+    localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    console.log(localStorageCartItems);
+    setCartItems(localStorageCartItems);        
+  },[isOpen])
 
   const handleSignout = async () => {
     try {
@@ -69,8 +82,8 @@ export default function Header() {
             <AiOutlineSearch />
           </button>
       </form>
-      <Button color="light" onClick={()=>setIsOpen(true)}>Cart</Button>
-      <CartComponent isOpen={isOpen} setIsOpen={setIsOpen} />
+      <Button onClick={()=>setIsOpen(true)} size="sm" color="light"><FaShoppingCart /><Badge color="gray">{cartItems.length}</Badge></Button>
+      <CartComponent isOpen={isOpen} setIsOpen={setIsOpen} cartItems={cartItems} setCartItems={setCartItems}/>
       {/* <Button className='w-12 h-10 lg:hidden' color='gray' pill>
         <AiOutlineSearch />
       </Button> */}

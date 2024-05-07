@@ -5,15 +5,15 @@ import 'react-modern-drawer/dist/index.css'
 import { Card } from "flowbite-react";
 import { RiCloseCircleLine } from "react-icons/ri";
 
-export default function CartComponent({isOpen, setIsOpen}) {
+export default function CartComponent({isOpen, setIsOpen, cartItems, setCartItems}) {
 
-    const [cartItems, setCartItems]=useState([]);
-    let localStorageCartItems;
-    useEffect(()=>{
-        localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        console.log(localStorageCartItems);
-        setCartItems(localStorageCartItems);        
-    },[isOpen])
+    // const [cartItems, setCartItems]=useState([]);
+    // let localStorageCartItems;
+    // useEffect(()=>{
+    //     localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+    //     console.log(localStorageCartItems);
+    //     setCartItems(localStorageCartItems);        
+    // },[isOpen])
 
     const toggleDrawer = () => {
         setIsOpen((prevState) => !prevState)

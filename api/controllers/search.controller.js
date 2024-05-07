@@ -3,7 +3,7 @@ import { errorHandler } from '../utils/error.js';
 
 const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
                           "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
-                          "Chocolate", ]
+                          "Chocolate", "Pizza"]
 
  function generateCombinations(words) {
     let combinations = [];

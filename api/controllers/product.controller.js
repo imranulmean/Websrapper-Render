@@ -2,8 +2,8 @@ import { AldiCollection, ColesCollection, WoolsCollection } from '../models/prod
 import { errorHandler } from '../utils/error.js';
 
 const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
-                          "Chocolate", ]
+                          "Margarine", "Sauce", "Ready", "Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
+                          "Chocolate", "Pizza"]
 
 async function getProducts(req, collectionName, limit1) {
   try {
