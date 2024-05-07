@@ -21,17 +21,14 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
             setLoading(false);
             const data= await res.json();
             setComparisonProducts(data.products);
-            console.log(data);
         }
     }
 
-    const addToCart = () => {
-        console.log("Adding to cart");
-        console.log(post);
-        // Save the product to localStorage
+    const addToCart = (item) => {
         const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-        cartItems.push(post);
+        cartItems.push(item);
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        alert("Added to cart")
     };
 
   return (
@@ -56,7 +53,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                             </div>
                         </div>
                     </div> 
-                    <Button color="dark" onClick={addToCart}>Add To Cart</Button>
+                    <Button color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
                   </div>
                 </div>
                 {/* Comparision Products Right */}
@@ -85,6 +82,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                         </div>
                                     </div>
                                 </div>
+                                <Button color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
                             </div>
                             )
                         }
