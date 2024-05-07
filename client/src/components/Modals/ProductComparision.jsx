@@ -40,7 +40,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                 {/* Main Product Left*/}
                 <div className='col-span-1 inline-grid'>
                  <div>
-                    <Button onClick={comparisonApi} size="xs" color="dark">See Comparison</Button>
+                    <Button onClick={comparisonApi} size="xs" color="dark">Compare Now</Button>
                     <div class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                             <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
                         <div class="px-2 pb-2">
@@ -53,7 +53,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                             </div>
                         </div>
                     </div> 
-                    <Button color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
+                    <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
                   </div>
                 </div>
                 {/* Comparision Products Right */}
@@ -82,7 +82,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                         </div>
                                     </div>
                                 </div>
-                                <Button color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
+                                <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
                             </div>
                             )
                         }

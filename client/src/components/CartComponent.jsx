@@ -38,17 +38,16 @@ export default function CartComponent({isOpen, setIsOpen}) {
                         {
                             cartItems && cartItems.length > 0 &&
                             <div className="w-full p-1">
-                                <div className="flow-root p-1">
                                     <ul className="py-2 h-[500px] overflow-y-auto divide-y divide-gray-200 dark:divide-gray-700">
                                         {
                                             cartItems.map((c) => {
                                                 return (
                                                     <li className="py-3 sm:py-4">
-                                                        <div className="flex items-center space-x-4">
+                                                        <div className="flex items-center">
                                                             <div className="shrink-0">
-                                                                <img alt="Neil image" height="32" src={c.productImage} width="64" className="rounded-full" />
+                                                                <img alt="Neil image" src={c.productImage} className="rounded-full w-28" />
                                                             </div>
-                                                            <div className="min-w-0 flex-1">
+                                                            <div className="w-full">
                                                                 <p className="text-sm font-medium text-gray-900 dark:text-white">{c.productTitle}</p>
                                                                 <p className="truncate text-sm text-gray-500 dark:text-gray-400">{c.shop}</p>
                                                             </div>
@@ -60,7 +59,7 @@ export default function CartComponent({isOpen, setIsOpen}) {
                                             })
                                         }
                                     </ul>
-                                </div>
+
                             </div>
                         }
                     </div>
