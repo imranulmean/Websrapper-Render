@@ -2,7 +2,7 @@ import { AldiCollection, ColesCollection, WoolsCollection } from '../models/prod
 import { errorHandler } from '../utils/error.js';
 
 const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink"]
+                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread"]
 
  function generateCombinations(words) {
     let combinations = [];

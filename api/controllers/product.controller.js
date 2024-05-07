@@ -2,7 +2,7 @@ import { AldiCollection, ColesCollection, WoolsCollection } from '../models/prod
 import { errorHandler } from '../utils/error.js';
 
 const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink"]
+                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread"]
 
 async function getProducts(req, collectionName, limit1) {
   try {
@@ -138,7 +138,7 @@ export const getComparisonProducts = async (req, res, next) => {
         // console.log("searchTerm: ", req.query.searchTerm)
         // console.log("Current Name: ", parsedProduct.productTitle)
         // console.log("matchingPercentage: ", matchingPercentage)
-        if (matchingPercentage > 33) {
+        if (matchingPercentage > 50) {
             finalProducts.push(product1);
         }
       });

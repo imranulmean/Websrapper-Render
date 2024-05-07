@@ -68,7 +68,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                 <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                                     <img class="p-1 rounded-t-lg" src={product.productImage} alt="product image" />
                                     <div class="px-2 pb-2">
-                                        <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{post.productTitle}</h5>
+                                        <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{product.productTitle}</h5>
                                         <div class="flex items-center justify-between">
                                             <span class="text-sm font-medium text-gray-600 dark:text-white">{product.shop}</span>
                                         </div>
