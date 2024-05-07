@@ -85,7 +85,10 @@ export default function Header() {
             <AiOutlineSearch />
           </button>
       </form>
-      <Button onClick={()=>setIsOpen(true)} size="sm" color="light"><FaShoppingCart /><Badge color="gray">{cartItemsContext.length}</Badge></Button>
+      <button className="py-1.5 px-0.5 group flex items-center justify-center text-center font-medium relative focus:z-10 focus:outline-none text-gray-900 bg-white border border-gray-300 enabled:hover:bg-gray-100 focus:ring-cyan-300 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:enabled:hover:bg-gray-700 dark:enabled:hover:border-gray-700 dark:focus:ring-gray-700 rounded-lg focus:ring-2" 
+              onClick={()=>setIsOpen(true)}>
+                <FaShoppingCart /><Badge color="gray" size="xs">{cartItemsContext.length}</Badge>
+      </button>
       <CartComponent isOpen={isOpen} setIsOpen={setIsOpen} />
       {/* <Button className='w-12 h-10 lg:hidden' color='gray' pill>
         <AiOutlineSearch />
