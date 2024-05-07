@@ -6,6 +6,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleTheme } from '../redux/theme/themeSlice';
 import { signoutSuccess } from '../redux/user/userSlice';
 import { useEffect, useState } from 'react';
+import CartComponent from './CartComponent';
 
 export default function Header() {
   const path = useLocation().pathname;
@@ -15,6 +16,7 @@ export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -67,6 +69,8 @@ export default function Header() {
             <AiOutlineSearch />
           </button>
       </form>
+      <Button color="light" onClick={()=>setIsOpen(true)}>Cart</Button>
+      <CartComponent isOpen={isOpen} setIsOpen={setIsOpen} />
       {/* <Button className='w-12 h-10 lg:hidden' color='gray' pill>
         <AiOutlineSearch />
       </Button> */}

@@ -2,7 +2,8 @@ import { AldiCollection, ColesCollection, WoolsCollection } from '../models/prod
 import { errorHandler } from '../utils/error.js';
 
 const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread"]
+                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
+                          "Chocolate", ]
 
  function generateCombinations(words) {
     let combinations = [];
@@ -87,12 +88,12 @@ function levenshteinDistance(a, b) {
       let searchTerm = req.query.searchTerm || '';
       const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
       let matchCategories = searchTerm.match(predictedCategoriesRegex);
-      console.log("Search Term:", searchTerm)
-      console.log("First getting the matchCategories:", matchCategories)
+      // console.log("Search Term:", searchTerm)
+      // console.log("First getting the matchCategories:", matchCategories)
       if(!matchCategories || matchCategories==null){
         matchCategories=[];        
         matchCategories.push(findClosestMatch(searchTerm));
-        console.log("Second getting the matchCategories:", matchCategories)
+        // console.log("Second getting the matchCategories:", matchCategories)
       }
       const regexPattern = new RegExp(matchCategories.join('|'), 'gi');   
       let query = {

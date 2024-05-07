@@ -2,7 +2,8 @@ import { AldiCollection, ColesCollection, WoolsCollection } from '../models/prod
 import { errorHandler } from '../utils/error.js';
 
 const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread"]
+                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
+                          "Chocolate", ]
 
 async function getProducts(req, collectionName, limit1) {
   try {
@@ -82,6 +83,7 @@ async function getComparisonEngine(req, collectionName, limit1) {
     /////////////Using the Predicted Category ///////////
       const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
       const matchCategories = searchTerm.match(predictedCategoriesRegex);
+      // console.log(matchCategories)
       const regexPattern = new RegExp(matchCategories.join('|'), 'gi'); 
       const productPrice = Number(req.query.productPrice);
       let query = {

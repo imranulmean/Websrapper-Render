@@ -3,9 +3,7 @@ import { Modal, Button, Spinner } from 'flowbite-react';
 import { useState } from 'react';
 import PostCard from '../PostCard';
 
-export default function ProductComparisionModal({ post, showModal,  setShowModal}) {
-
-    console.log(post);
+export default function ProductComparisionModal({ post, showModal,  setShowModal}) {   
     const [comparisonProducts, setComparisonProducts]=useState([]);
     const [loading, setLoading]=useState(false);
     const searchTerm=post.productTitle;
@@ -26,6 +24,15 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
             console.log(data);
         }
     }
+
+    const addToCart = () => {
+        console.log("Adding to cart");
+        console.log(post);
+        // Save the product to localStorage
+        const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+        cartItems.push(post);
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+    };
 
   return (
     <>
@@ -49,6 +56,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                             </div>
                         </div>
                     </div> 
+                    <Button color="dark" onClick={addToCart}>Add To Cart</Button>
                   </div>
                 </div>
                 {/* Comparision Products Right */}
