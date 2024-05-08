@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const categoriesSchema = new mongoose.Schema(
   {
-    predictedCategories: [{ type: String }]    
+    categoryName: { type: String }    
   }
 );
 

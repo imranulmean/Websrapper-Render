@@ -1,10 +1,13 @@
 import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
+import Categories from '../models/categories.model.js';
+import {getPredictedCategories} from './predictedCategories.js';
 import { errorHandler } from '../utils/error.js';
 
-const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-                          "Margarine", "Sauce", "Ready", "Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
-                          "Chocolate", "Pizza"]
+// let predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
+//                           "Margarine", "Sauce", "Ready", "Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
+//                           "Chocolate", "Pizza"]
 
+let predictedCategories=[];
 async function getProducts(req, collectionName, limit1) {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
@@ -42,9 +45,15 @@ async function getProducts(req, collectionName, limit1) {
   }
 }
 
-
 export const getColesProducts = async (req, res, next) => {  
   try {
+    ///////////// Creating Caterogies ///////
+    // for(let p of predictedCategories){
+    //   const newCategory= new Categories({categoryName:p});
+    //   const categorySave= await newCategory.save();
+    //   console.log(categorySave);
+    // }
+    ///////////////////////////////////////////
     const { products, totalProducts } = await getProducts(req, ColesCollection, 5);
 
     res.status(200).json({
@@ -81,9 +90,10 @@ async function getComparisonEngine(req, collectionName, limit1) {
   try {
     let searchTerm = req.query.searchTerm || '';
     /////////////Using the Predicted Category ///////////
+      predictedCategories=await getPredictedCategories();
+      console.log(predictedCategories);
       const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
       const matchCategories = searchTerm.match(predictedCategoriesRegex);
-      // console.log(matchCategories)
       const regexPattern = new RegExp(matchCategories.join('|'), 'gi'); 
       const productPrice = Number(req.query.productPrice);
       let query = {

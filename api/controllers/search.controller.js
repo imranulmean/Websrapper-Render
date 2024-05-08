@@ -1,9 +1,12 @@
 import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
+import {getPredictedCategories} from './predictedCategories.js';
 
-const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-                          "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
-                          "Chocolate", "Pizza"]
+// const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
+//                           "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
+//                           "Chocolate", ]
+
+let predictedCategories=[];
 
  function generateCombinations(words) {
     let combinations = [];
@@ -86,6 +89,7 @@ function levenshteinDistance(a, b) {
     
     //////////Using Predicted Categories////////////
       let searchTerm = req.query.searchTerm || '';
+      predictedCategories=await getPredictedCategories()
       const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
       let matchCategories = searchTerm.match(predictedCategoriesRegex);
       // console.log("Search Term:", searchTerm)
@@ -148,9 +152,9 @@ function levenshteinDistance(a, b) {
           console.log("Entering the Advance Logic")
           const { products: advanceSearchProducts, totalProducts: advanceSearchTotalProducts }=await advanceSearchEngine(req, collectionName, limit, startIndex)
           products=advanceSearchProducts;
-          totalProducts=advanceSearchTotalProducts;
-          //////////////////////////////////////////////
+          totalProducts=advanceSearchTotalProducts;          
       }
+      //////////////////////////////////////////////
   
       return {
         products,
