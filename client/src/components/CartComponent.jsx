@@ -1,10 +1,11 @@
-import { IoCloseOutline } from "react-icons/io5";
+import { GrClose } from "react-icons/gr";
 import { useEffect, useState } from 'react';
 import Drawer from 'react-modern-drawer'
 import 'react-modern-drawer/dist/index.css'
 import { Card } from "flowbite-react";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { useCart } from "../context/CartContext";
+import { Button } from 'flowbite-react';
 
 export default function CartComponent({isOpen, setIsOpen}) {
     const {cartItemsContext ,removeItemFromCart} = useCart();
@@ -22,10 +23,12 @@ export default function CartComponent({isOpen, setIsOpen}) {
     }
   return (
         <>            
-            <Drawer open={isOpen} onClose={toggleDrawer} direction='right' className='bla bla bla'>
+            <Drawer open={isOpen} onClose={toggleDrawer} direction='right' style={{width:"320px"}}>
                 <div className="relative h-full">
-                    <div className="absolute top-0 right-0">
-                        <button onClick={() => setIsOpen(false)}><IoCloseOutline /></button>
+                    <div className="absolute top-2 right-3">
+                        <button className="group flex items-center justify-center text-center font-medium relative focus:z-10 focus:outline-none text-gray-900 enabled:hover:bg-gray-100 focus:ring-cyan-300 dark:bg-gray-600 dark:text-white dark:border-gray-600 dark:enabled:hover:bg-gray-700 dark:enabled:hover:border-gray-700 dark:focus:ring-gray-700 rounded-lg focus:ring-2" onClick={() => setIsOpen(false)}>
+                            <GrClose />
+                        </button>
                     </div>
                     <div>
                         {

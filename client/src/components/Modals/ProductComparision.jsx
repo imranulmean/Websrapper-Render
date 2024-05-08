@@ -51,11 +51,11 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                             </div>
                             <div class="flex items-center justify-between">
                                 <span class="text-md font-bold text-gray-900 dark:text-white">${post.productPrice}</span>
-                            </div>
-                        </div>
-                    </div> 
-                    <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
-                  </div>
+                            </div>                            
+                        </div>                        
+                    </div>
+                    <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>                                         
+                  </div>                  
                 </div>
                 {/* Comparision Products Right */}
                 <div className='col-span-2 h-[650px] overflow-y-auto'>
@@ -81,9 +81,9 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                         <div class="flex items-center justify-between">
                                             <span class="text-md font-bold text-gray-900 dark:text-white">${product.productPrice}</span>
                                         </div>
-                                    </div>
-                                </div>
-                                <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
+                                        <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
+                                    </div>                                      
+                                </div>                                
                             </div>
                             )
                         }

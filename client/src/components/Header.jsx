@@ -31,16 +31,6 @@ export default function Header() {
       setSearchTerm(searchTermFromUrl);
     }
   }, [location.search]);
-  // useEffect(()=>{
-  //     localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-  //     console.log(localStorageCartItems);
-  //     setCartItems(localStorageCartItems);        
-  // },[])
-  // useEffect(()=>{
-  //   localStorageCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-  //   console.log(localStorageCartItems);
-  //   setCartItems(localStorageCartItems);        
-  // },[isOpen])
 
   const handleSignout = async () => {
     try {
