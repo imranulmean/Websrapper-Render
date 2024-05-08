@@ -91,7 +91,6 @@ async function getComparisonEngine(req, collectionName, limit1) {
     let searchTerm = req.query.searchTerm || '';
     /////////////Using the Predicted Category ///////////
       predictedCategories=await getPredictedCategories();
-      console.log(predictedCategories);
       const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
       const matchCategories = searchTerm.match(predictedCategoriesRegex);
       const regexPattern = new RegExp(matchCategories.join('|'), 'gi'); 
