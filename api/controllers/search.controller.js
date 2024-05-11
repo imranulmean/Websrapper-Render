@@ -1,6 +1,7 @@
 import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
+import natural from 'natural';
 
 // const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
 //                           "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
@@ -180,6 +181,72 @@ function levenshteinDistance(a, b) {
       next(error);
     }
   };  
+
+  /////////////////////Getting The Similar Products //////////
+// Create a LevenshteinDistance instance
+const levenshtein = natural.LevenshteinDistance;
+
+export const findSimilarProducts = async (req, res, next) => {
+  console.log(natural.JaroWinklerDistance("Cream Milk 1l", "A2 Dairy Full Cream Milk | 2L"));
+  try {
+    // Aggregate distinct product titles from ColesCollection
+    const colesTitles = await ColesCollection.aggregate([
+      { $group: { _id: '$productTitle' } }
+    ]);
+    // Aggregate distinct product titles from WoolsCollection
+    const woolsTitles = await WoolsCollection.aggregate([
+      { $group: { _id: '$productTitle' } }
+    ]);
+
+    // Merge titles from both collections into a single array
+    const allTitles = [...colesTitles, ...woolsTitles].map(title => title._id);
+    // Find similar titles using fuzzy matching
+    const similarProducts = [];
+    for (const title of allTitles) {
+      // Query both collections for products with similar titles
+      const colesProducts = await ColesCollection.find({ productTitle: { $regex: title, $options: 'i' } });
+      const woolsProducts = await WoolsCollection.find({ productTitle: { $regex: title, $options: 'i' } });
+
+      // Add similar products to the result array
+      if (colesProducts.length > 0 || woolsProducts.length > 0) {
+        similarProducts.push({ title, colesProducts, woolsProducts });
+      } else {
+        // If no exact match found, perform fuzzy matching
+        const similarColesProducts = await ColesCollection.find({
+          productTitle: { $regex: title.split(' ').join('.*'), $options: 'i' }
+        });
+
+        const similarWoolsProducts = await WoolsCollection.find({
+          productTitle: { $regex: title.split(' ').join('.*'), $options: 'i' }
+        });
+
+        // Add similar products to the result array based on Levenshtein distance
+        if (similarColesProducts.length > 0 || similarWoolsProducts.length > 0) {
+          const colesSimilarity = similarColesProducts.map(product => ({
+            product,
+            similarity: levenshtein.get(title, product.productTitle)
+          }));
+
+          const woolsSimilarity = similarWoolsProducts.map(product => ({
+            product,
+            similarity: levenshtein.get(title, product.productTitle)
+          }));
+
+          similarProducts.push({ title, colesProducts: colesSimilarity, woolsProducts: woolsSimilarity });
+        }
+      }
+    }
+
+    // Return the result
+    res.status(200).json({
+      products: similarProducts,
+    });
+  } catch (error) {
+    console.error('Error finding similar products:', error);
+    throw error;
+  }
+}
+
 
 // This will be implemented Later on
 

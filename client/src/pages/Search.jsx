@@ -101,6 +101,11 @@ export default function Search() {
     }
   };
 
+  const findSimilarProducts= async() =>{
+    const res= await fetch('/api/search/findSimilarProducts');
+    const data= await res.json();
+    console.log(data);
+  }
   return (
     <div className='flex flex-col md:flex-row'>
 
@@ -127,7 +132,8 @@ export default function Search() {
           <Button type='submit' color="dark">
             Apply Filters
           </Button>
-        </form>
+          <Button size="xs" color="dark" onClick={findSimilarProducts}>FindSimilarProducts</Button>
+        </form>        
       </div>
 
       {/* Products Section */}
