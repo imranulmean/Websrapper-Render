@@ -1,8 +1,7 @@
 import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
-import natural from 'natural';
-
+import stringSimilarity from 'string-similarity';
 // const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
 //                           "Margarine",  "Sauce" ,"Ready","Vegan", "Drink", "Honey", "Bread", "Custard", "Sport",
 //                           "Chocolate", ]
@@ -183,65 +182,44 @@ function levenshteinDistance(a, b) {
   };  
 
   /////////////////////Getting The Similar Products //////////
-// Create a LevenshteinDistance instance
-const levenshtein = natural.LevenshteinDistance;
+
+function calculateMatchingPercentage(searchTerm, text) {
+  const searchTermWords = searchTerm.toLowerCase().match(/\w+/g);
+  const textWords = text.toLowerCase().match(/\w+/g);
+  
+  if (!searchTermWords || !textWords) return 0;
+  
+  let matchingWords = 0;
+  searchTermWords.forEach(word => {
+      if (textWords.includes(word)) {
+          matchingWords++;
+      }
+  });          
+  return (matchingWords / searchTermWords.length) * 100;
+}
 
 export const findSimilarProducts = async (req, res, next) => {
-  console.log(natural.JaroWinklerDistance("Cream Milk 1l", "A2 Dairy Full Cream Milk | 2L"));
+  // console.log(natural.JaroWinklerDistance("Coles Free Range Eggs 12 Pack | 600g", "Lake Macquarie 30 Large Free Range Eggs 1.5kg"));
+  // const colesProducts= await ColesCollection.find();
+  // const woolsProducts= await WoolsCollection.find();
+  // console.log(`colesProducts: ${colesProducts.length}, WoolsProducts: ${woolsProducts.length}`)
+  let colesTitle="Coles Free Range Eggs 12 Pack | 600g";
+  colesTitle= colesTitle.replace("| ", '');
+  let woolsTitle="Liberty Eggs 12 Jumbo Cage Free Eggs 800g";
+  console.log("colesTitle: ", colesTitle)
+  console.log("WoolsTitle: ", woolsTitle)
+  const generalCalculate=calculateMatchingPercentage(colesTitle, woolsTitle);
+  console.log("generalCalculate: ", generalCalculate)  
+  const similarity = stringSimilarity.compareTwoStrings(colesTitle, woolsTitle);
+  console.log("String similarity Library: ",similarity);
   try {
-    // Aggregate distinct product titles from ColesCollection
-    const colesTitles = await ColesCollection.aggregate([
-      { $group: { _id: '$productTitle' } }
-    ]);
-    // Aggregate distinct product titles from WoolsCollection
-    const woolsTitles = await WoolsCollection.aggregate([
-      { $group: { _id: '$productTitle' } }
-    ]);
-
-    // Merge titles from both collections into a single array
-    const allTitles = [...colesTitles, ...woolsTitles].map(title => title._id);
-    // Find similar titles using fuzzy matching
-    const similarProducts = [];
-    for (const title of allTitles) {
-      // Query both collections for products with similar titles
-      const colesProducts = await ColesCollection.find({ productTitle: { $regex: title, $options: 'i' } });
-      const woolsProducts = await WoolsCollection.find({ productTitle: { $regex: title, $options: 'i' } });
-
-      // Add similar products to the result array
-      if (colesProducts.length > 0 || woolsProducts.length > 0) {
-        similarProducts.push({ title, colesProducts, woolsProducts });
-      } else {
-        // If no exact match found, perform fuzzy matching
-        const similarColesProducts = await ColesCollection.find({
-          productTitle: { $regex: title.split(' ').join('.*'), $options: 'i' }
-        });
-
-        const similarWoolsProducts = await WoolsCollection.find({
-          productTitle: { $regex: title.split(' ').join('.*'), $options: 'i' }
-        });
-
-        // Add similar products to the result array based on Levenshtein distance
-        if (similarColesProducts.length > 0 || similarWoolsProducts.length > 0) {
-          const colesSimilarity = similarColesProducts.map(product => ({
-            product,
-            similarity: levenshtein.get(title, product.productTitle)
-          }));
-
-          const woolsSimilarity = similarWoolsProducts.map(product => ({
-            product,
-            similarity: levenshtein.get(title, product.productTitle)
-          }));
-
-          similarProducts.push({ title, colesProducts: colesSimilarity, woolsProducts: woolsSimilarity });
-        }
-      }
+      res.status(200).json({
+        products:"Hello"
+      })
     }
 
-    // Return the result
-    res.status(200).json({
-      products: similarProducts,
-    });
-  } catch (error) {
+  
+  catch (error) {
     console.error('Error finding similar products:', error);
     throw error;
   }
