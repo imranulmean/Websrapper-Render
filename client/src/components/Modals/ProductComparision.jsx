@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Modal, Button, Spinner } from 'flowbite-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PostCard from '../PostCard';
 import { useCart } from '../../context/CartContext';
 
 
 export default function ProductComparisionModal({ post, showModal,  setShowModal}) {   
     const { addItemToCart } = useCart();
+    const initialRender = useRef(true);
     const [comparisonProducts, setComparisonProducts]=useState([]);
     const [loading, setLoading]=useState(false);
     const searchTerm=post.productTitle;
@@ -15,7 +16,15 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
         searchTerm: searchTerm,
         productPrice: productPrice,
         mainCategoryName:post.mainCategoryName
-    }).toString();
+    }).toString();    
+
+    useEffect(() => {
+        if (initialRender.current) {            
+            initialRender.current = false;
+        } else if (showModal) {
+            comparisonApi();
+        }
+    }, [showModal]);
 
     const comparisonApi = async () =>{
         setLoading(true);
@@ -26,9 +35,6 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
             setComparisonProducts(data.products);
         }
     } 
-    // useEffect(()=>{       
-    //     comparisonApi();
-    // },[showModal=true]);
 
     const addToCart = (item) => {
         addItemToCart(item);
@@ -42,11 +48,12 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
         <Modal.Body>
           <div className='grid grid-cols-3 gap-2'>                
                 {/* Main Product Left*/}
-                <div className='col-span-1 inline-grid'>
+                <div className='col-span-1 inline-grid'>                 
                  <div>
-                    <Button onClick={comparisonApi} size="xs" color="dark">Compare Now</Button>
+                    {/* <Button onClick={comparisonApi} size="xs" color="dark">Compare Now</Button> */}
+                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Selected Product</h5>
                     <div class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                            <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
+                        <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
                         <div class="px-2 pb-2">
                             <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{post.productTitle}</h5>
                             <div class="flex items-center justify-between">
@@ -62,7 +69,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                 </div>
                 {/* Comparision Products Right */}
                 <div className='col-span-2 h-[650px] overflow-y-auto'>
-                      Comparision Products  
+                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Comparision Products</h5>
                       {
                         loading && 
                         <div className='flex justify-center items-center'>

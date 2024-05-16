@@ -202,7 +202,7 @@ async function getComparisonProducts_with_Weights_Engine(req, collectionName, li
   
       // Add product price to the query if available and valid
       if (!isNaN(productPrice)) {
-          query.productPrice = { $lte: productPrice };
+          query.productPrice = { $lt: productPrice };
       }
   
       // Execute the query
