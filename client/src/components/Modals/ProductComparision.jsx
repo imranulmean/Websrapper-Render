@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Modal, Button, Spinner } from 'flowbite-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PostCard from '../PostCard';
 import { useCart } from '../../context/CartContext';
 
@@ -19,13 +19,16 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
 
     const comparisonApi = async () =>{
         setLoading(true);
-        const res = await fetch(`/api/products/getComparisonProducts?${searchQuery}`);
+        const res = await fetch(`/api/products/getComparisonProducts_with_Weights?${searchQuery}`);
         if(res.ok){
             setLoading(false);
             const data= await res.json();
             setComparisonProducts(data.products);
         }
-    }
+    } 
+    // useEffect(()=>{       
+    //     comparisonApi();
+    // },[showModal=true]);
 
     const addToCart = (item) => {
         addItemToCart(item);

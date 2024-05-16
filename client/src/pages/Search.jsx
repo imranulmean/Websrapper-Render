@@ -132,7 +132,7 @@ export default function Search() {
           <Button type='submit' color="dark">
             Apply Filters
           </Button>
-          <Button size="xs" color="dark" onClick={findSimilarProducts}>FindSimilarProducts</Button>
+          {/* <Button size="xs" color="dark" onClick={findSimilarProducts}>FindSimilarProducts</Button> */}
         </form>        
       </div>
 

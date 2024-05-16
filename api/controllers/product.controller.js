@@ -164,7 +164,70 @@ export const getComparisonProducts = async (req, res, next) => {
   }
 };
 
+async function getComparisonProducts_with_Weights_Engine(req, collectionName, limit1){
+  try {
+    console.log(req.query.searchTerm);
+    let searchTerm = req.query.searchTerm || '';
+    const productPrice = Number(req.query.productPrice);
+    predictedCategories=await getPredictedCategories();
+    const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
+    const matchCategories = searchTerm.match(predictedCategoriesRegex);
+    const regexPattern = new RegExp(matchCategories.join('|'), 'gi');
+    ////////////////////////////////
+    var categoryMatch = searchTerm.match(regexPattern);
+    var productType = categoryMatch ? categoryMatch : null;
+    console.log(productType);
+    var weightMatch = searchTerm.match(/(\d+(\.\d+)?(kg|L|gm|g|ml))/i);
+    var weight = weightMatch ? weightMatch[1] : null;
+    console.log(weight);
+  
+    /////////////////////////// Find The products using the ProductType and Weight
+    // Construct the combined regex pattern for productTitle
+    let combinedPattern = '';
+    if (productType.length > 0 && weight) {
+        combinedPattern = productType.map(type => `${type}.*${weight}`).join('|');
+    } else if (productType.length > 0) {
+        combinedPattern = productType.join('|');
+    } else if (weight) {
+        combinedPattern = weight;
+    }
+    const combinedRegex = new RegExp(combinedPattern, 'i');
+      // Constructing the query object
+      let query = {};
+  
+      // Add combined regex pattern to query for productTitle
+      if (combinedPattern) {
+          query.productTitle = { $regex: combinedRegex };
+      }
+  
+      // Add product price to the query if available and valid
+      if (!isNaN(productPrice)) {
+          query.productPrice = { $lte: productPrice };
+      }
+  
+      // Execute the query
+      let products = await collectionName.find(query).sort({ productPrice: 1 });
+      return { products };     
+  } catch (error) {
+    throw error;
+  }
 
+}  
+
+export const getComparisonProducts_with_Weights = async (req, res, next) => {
+  try {
+    const { products: colesProducts } = await getComparisonProducts_with_Weights_Engine(req, ColesCollection, 10);
+    const { products: woolsProducts } = await getComparisonProducts_with_Weights_Engine(req, WoolsCollection, 10);
+    const combinedProducts = colesProducts.concat(woolsProducts);
+    // Return the result
+    res.status(200).json({
+        products: combinedProducts
+    });    
+  } catch (error) {
+    console.log(error);
+    next(error);    
+  }
+}
 
 // function calculateMatchingPercentage(searchTerm, text) {
 //   const searchTermWords = searchTerm.toLowerCase().match(/\w+/g);
@@ -214,3 +277,17 @@ export const getComparisonProducts = async (req, res, next) => {
 //     return str.match(new RegExp(milkType, 'i')) && str.match(new RegExp(weight, 'i'));
 // });
 // console.log(filteredStrings);
+
+
+// [
+//   {
+//     $group: {
+//       _id: "$subCategoryName",
+//       products: { $push: "$$ROOT" },
+//       totalProducts: { $sum: 1 }
+//     }
+//   },
+//   {
+//     $sort: { _id: 1 }
+//   }
+// ]
