@@ -20,8 +20,9 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
 
     useEffect(() => {
         if (initialRender.current) {            
-            initialRender.current = false;
+            initialRender.current = false;            
         } else if (showModal) {
+            console.log(post)
             comparisonApi();
         }
     }, [showModal]);

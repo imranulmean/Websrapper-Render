@@ -166,27 +166,23 @@ export const getComparisonProducts = async (req, res, next) => {
 
 async function getComparisonProducts_with_Weights_Engine(req, collectionName, limit1){
   try {
-    console.log(req.query.searchTerm);
+
     let searchTerm = req.query.searchTerm || '';
     const productPrice = Number(req.query.productPrice);
     predictedCategories=await getPredictedCategories();
     const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
     const matchCategories = searchTerm.match(predictedCategoriesRegex);
-    const regexPattern = new RegExp(matchCategories.join('|'), 'gi');
-    ////////////////////////////////
-    var categoryMatch = searchTerm.match(regexPattern);
-    var productType = categoryMatch ? categoryMatch : null;
-    console.log(productType);
+    var productType = matchCategories ? matchCategories : null;
     var weightMatch = searchTerm.match(/(\d+(\.\d+)?(kg|L|gm|g|ml))/i);
     var weight = weightMatch ? weightMatch[1] : null;
-    console.log(weight);
-  
+    console.log("productType: ",productType)
+    console.log("weight: ",weight)
     /////////////////////////// Find The products using the ProductType and Weight
     // Construct the combined regex pattern for productTitle
     let combinedPattern = '';
-    if (productType.length > 0 && weight) {
+    if (productType && productType.length > 0 && weight) {
         combinedPattern = productType.map(type => `${type}.*${weight}`).join('|');
-    } else if (productType.length > 0) {
+    } else if (productType && productType.length > 0) {
         combinedPattern = productType.join('|');
     } else if (weight) {
         combinedPattern = weight;
@@ -206,8 +202,36 @@ async function getComparisonProducts_with_Weights_Engine(req, collectionName, li
       }
   
       // Execute the query
+////////////////////////////////
+      // Execute the query for combined pattern
       let products = await collectionName.find(query).sort({ productPrice: 1 });
-      return { products };     
+      const productTitles = products.map(product => product.productTitle);
+
+      // Constructing the query object for weight pattern only (excluding already found products)
+      let weightQuery = {};
+      if (weight) {
+          weightQuery.productTitle = { $regex: new RegExp(weight, 'i') };
+          if (productTitles.length > 0) {
+              weightQuery.productTitle.$nin = productTitles;
+          }
+      }
+      if (!isNaN(productPrice)) {
+          weightQuery.productPrice = { $lt: productPrice };
+      }
+
+      // Execute the query for weight pattern
+      let weightProducts = [];
+      if (Object.keys(weightQuery).length > 0) {
+          weightProducts = await collectionName.find(weightQuery).sort({ productPrice: 1 });
+      }
+
+      // Combine both results ensuring no duplicates
+      const allProducts = products.concat(weightProducts);
+
+      return { products:allProducts };   
+//////////////////////////////////      
+      // let products = await collectionName.find(query).sort({ productPrice: 1 });
+      // return { products };     
   } catch (error) {
     throw error;
   }
@@ -285,6 +309,18 @@ export const getComparisonProducts_with_Weights = async (req, res, next) => {
 //       _id: "$subCategoryName",
 //       products: { $push: "$$ROOT" },
 //       totalProducts: { $sum: 1 }
+//     }
+//   },
+//   {
+//     $sort: { _id: 1 }
+//   }
+// ]
+
+// [
+//   {
+//     $group: {
+//       _id: "$mainCategoryName",
+//       "subCategories": { "$addToSet": "$subCategoryName" }
 //     }
 //   },
 //   {
