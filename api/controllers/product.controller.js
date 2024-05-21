@@ -224,6 +224,58 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
 
 }  
 
+// async function getComparisonProducts_with_Type_Weights_Engine(req, collectionName, limit1){
+//     try {
+//       let searchTerm = req.query.searchTerm || '';
+//       let searchTermFromUrl = req.query.searchTermFromUrl || '';
+//       console.log("searchTermFromUrl: ", searchTermFromUrl)
+//       const productPrice = Number(req.query.productPrice);
+
+//       // Get predicted categories
+//       const predictedCategories = await getPredictedCategories();
+//       const predictedCategoriesRegex = new RegExp(predictedCategories.join('|'), 'gi');
+//       const matchCategories = searchTerm.match(predictedCategoriesRegex);
+//       const productType = matchCategories ? matchCategories : null;
+//       const weightMatch = searchTerm.match(/(\d+(\.\d+)?(kg|L|gm|g|ml))/i);
+//       const weight = weightMatch ? weightMatch[1] : null;
+
+//       // Combine all search terms into an array
+//       let searchTerms = [];
+//       if (searchTermFromUrl) searchTerms.push(searchTermFromUrl);
+//       if (productType) searchTerms.push(...productType);
+//       if (weight) searchTerms.push(weight);
+
+//       // Construct the initial regex to fetch potential matches
+//       const initialPattern = searchTerms.join('|');
+//       const initialRegex = new RegExp(initialPattern, 'i');
+
+//       // Constructing the query object
+//       let query = {};
+//       if (initialPattern) {
+//           query.productTitle = { $regex: initialRegex };
+//       }
+//       if (!isNaN(productPrice)) {
+//           query.productPrice = { $lt: productPrice };
+//       }
+
+//       // Execute the query to get potential matches
+//       let potentialProducts = await collectionName.find(query).sort({ productPrice: 1 });
+
+//       // Filter the products to ensure all search terms are present
+//       const filteredProducts = potentialProducts.filter(product => {
+//           return searchTerms.every(term => new RegExp(term, 'i').test(product.productTitle));
+//       });
+
+//       return {
+//           products: filteredProducts,
+//           weight,
+//           productPrice
+//       };
+//   } catch (error) {
+//       throw error;
+//   }
+// } 
+
 async function getComparisonProducts_only_Weights_Engine(req, collectionName, combinedProducts, weight, productPrice, limit1){
 
   try{
