@@ -3,20 +3,17 @@ import { Modal, Button, Spinner } from 'flowbite-react';
 import { useEffect, useRef, useState } from 'react';
 import PostCard from '../PostCard';
 import { useCart } from '../../context/CartContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 export default function ProductComparisionModal({ post, showModal,  setShowModal}) {   
+    const location = useLocation();
     const { addItemToCart } = useCart();
     const initialRender = useRef(true);
     const [comparisonProducts, setComparisonProducts]=useState([]);
     const [loading, setLoading]=useState(false);
     const searchTerm=post.productTitle;
     const productPrice = post.productPrice.toString(); // Convert productPrice to string
-    const searchQuery = new URLSearchParams({
-        searchTerm: searchTerm,
-        productPrice: productPrice,
-        mainCategoryName:post.mainCategoryName
-    }).toString();    
 
     useEffect(() => {
         if (initialRender.current) {            
@@ -28,6 +25,14 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
     }, [showModal]);
 
     const comparisonApi = async () =>{
+        const urlParams = new URLSearchParams(location.search);
+        console.log(urlParams.get('searchTerm'));
+        const searchQuery = new URLSearchParams({
+            searchTermFromUrl:urlParams.get('searchTerm'),
+            searchTerm: searchTerm,
+            productPrice: productPrice,
+            mainCategoryName:post.mainCategoryName
+        }).toString();          
         setLoading(true);
         const res = await fetch(`/api/products/getComparisonProducts_with_Weights?${searchQuery}`);
         if(res.ok){

@@ -168,6 +168,8 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
   
   try {
     let searchTerm = req.query.searchTerm || '';
+    let searchTermFromUrl= req.query.searchTermFromUrl || '';
+    console.log("searchTermFromUrl: ",searchTermFromUrl)
     const productPrice = Number(req.query.productPrice);
     predictedCategories=await getPredictedCategories();
     const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
@@ -179,6 +181,10 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     /////////////////////////// Find The products using the ProductType and Weight
     // Construct the combined regex pattern for productTitle
     let combinedPattern = '';
+    if(searchTermFromUrl && searchTermFromUrl!==''){
+      productType=[];
+      productType.push(searchTermFromUrl);
+    }
     if (productType && productType.length > 0 && weight) {
         combinedPattern = productType.map(type => `${type}.*${weight}`).join('|');
     } else if (productType && productType.length > 0) {
@@ -192,7 +198,7 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     // console.log("productType: ",productType)
     // console.log("weight: ",weight)
     // console.log("combinedPattern: ",combinedPattern)
-    // console.log("combinedRegex: ",combinedRegex)
+    console.log("combinedRegex: ",combinedRegex)
       // Constructing the query object
       let query = {};
   
