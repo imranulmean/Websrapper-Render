@@ -71,22 +71,7 @@ function levenshteinDistance(a, b) {
 
   
   async function advanceSearchEngine(req, collectionName, limit, startIndex){
-    // let query = {
-    //   ...(req.query.mainCategoryName && { mainCategoryName: req.query.mainCategoryName }),
-    //   ...(req.query.subCategoryName && { subCategoryName: req.query.subCategoryName }),
-    //   ...(req.query.shop && { shop: req.query.shop }),
-    // };
-  // Check if a search term is provided
-    // if (req.query.searchTerm) {
-    //    let searchTerm = req.query.searchTerm;      
-    //   // Split the search term into individual words
-    //   const searchTerms = searchTerm.split(' ').filter(word => word.trim() !== '');
-    //   // Generate combinations of search terms
-    //   const combinationArray = generateCombinations(searchTerms);
-    //   const regexPatterns = combinationArray.map(combination => new RegExp(combination.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i'));
-    //     query.$or = regexPatterns.map(pattern => ({ productTitle: { $regex: pattern } }))
-    // }
-    
+   
     //////////Using Predicted Categories////////////
       let searchTerm = req.query.searchTerm || '';
       predictedCategories=await getPredictedCategories()

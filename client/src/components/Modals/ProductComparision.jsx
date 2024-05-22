@@ -11,6 +11,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
     const { addItemToCart } = useCart();
     const initialRender = useRef(true);
     const [comparisonProducts, setComparisonProducts]=useState([]);
+    const [weightsProducts, setWeightsProducts]=useState([]);
     const [loading, setLoading]=useState(false);
     const searchTerm=post.productTitle;
     const productPrice = post.productPrice.toString(); // Convert productPrice to string
@@ -34,11 +35,22 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
             mainCategoryName:post.mainCategoryName
         }).toString();          
         setLoading(true);
-        const res = await fetch(`/api/products/getComparisonProducts_with_Weights?${searchQuery}`);
-        if(res.ok){
+        const res = await fetch(`/api/products/getComparisonProducts_with_Type_Weights?${searchQuery}`);
+        // if(res.ok){
             setLoading(false);
             const data= await res.json();
             setComparisonProducts(data.products);
+        // }
+        const weightRes = await fetch(`/api/products/getComparisonProducts_with_Only_Weights?${searchQuery}`,{
+            method:"POST",
+            headers: {
+                "Content-Type": "application/json" // Set the Content-Type header
+            },            
+            body:JSON.stringify(data.products)
+        });        
+        if(weightRes.ok){
+            const weightData= await weightRes.json();
+            setWeightsProducts(weightData.products); 
         }
     } 
 
@@ -85,27 +97,53 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                     <div>
                         <div className='grid grid-cols-2'>
                             {
-                            comparisonProducts.map((product) =>
-                            <div className='col-span-1'>
-                                <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                                    <img class="p-1 rounded-t-lg" src={product.productImage} alt="product image" />
-                                    <div class="px-2 pb-2">
-                                        <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{product.productTitle}</h5>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-sm font-medium text-gray-600 dark:text-white">{product.shop}</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-md font-bold text-gray-900 dark:text-white">${product.productPrice}</span>
-                                        </div>
-                                        <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
-                                    </div>                                      
-                                </div>                                
-                            </div>
-                            )
-                        }
+                                comparisonProducts.length<1 &&
+                                <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
+                            }
+                            {
+                                comparisonProducts.map((product) =>
+                                <div className='col-span-1'>
+                                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                                        <img class="p-1 rounded-t-lg" src={product.productImage} alt="product image" />
+                                        <div class="px-2 pb-2">
+                                            <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{product.productTitle}</h5>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm font-medium text-gray-600 dark:text-white">{product.shop}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-md font-bold text-gray-900 dark:text-white">${product.productPrice}</span>
+                                            </div>
+                                            <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
+                                        </div>                                      
+                                    </div>                                
+                                </div>
+                                )
+                            }
+                            {/* Similar Weighted Products From Others  */}                           
                         </div>                        
                     </div>  
-
+                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Similar Weighted Products:</h5>
+                    <div className='grid grid-cols-2'>                        
+                        {
+                                weightsProducts.map((product) =>
+                                <div className='col-span-1'>
+                                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                                        <img class="p-1 rounded-t-lg" src={product.productImage} alt="product image" />
+                                        <div class="px-2 pb-2">
+                                            <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{product.productTitle}</h5>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-sm font-medium text-gray-600 dark:text-white">{product.shop}</span>
+                                            </div>
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-md font-bold text-gray-900 dark:text-white">${product.productPrice}</span>
+                                            </div>
+                                            <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
+                                        </div>                                      
+                                    </div>                                
+                                </div>
+                                )
+                            }                         
+                    </div>
 
                 </div>
 
