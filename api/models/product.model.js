@@ -22,5 +22,6 @@ const productSchema = new mongoose.Schema(
 const AldiCollection = mongoose.model('aldiproducts', productSchema);
 const ColesCollection = mongoose.model('colesproducts2', productSchema);
 const WoolsCollection = mongoose.model('woolsproducts2', productSchema);
+const IgaCollection = mongoose.model('igaproducts2', productSchema);
 
-export { AldiCollection, ColesCollection, WoolsCollection };
+export { AldiCollection, ColesCollection, WoolsCollection, IgaCollection };

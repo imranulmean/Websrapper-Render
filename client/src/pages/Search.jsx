@@ -127,6 +127,7 @@ export default function Search() {
               <option value=''>All</option>
               <option value='coles'>Coles</option>
               <option value='woolworths'>Woolworths</option>
+              <option value='IGA'>IGA</option>
             </Select>
           </div>          
           <Button type='submit' color="dark">

@@ -1,4 +1,4 @@
-import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import stringSimilarity from 'string-similarity';
@@ -154,8 +154,9 @@ function levenshteinDistance(a, b) {
     try {
       const { products: colesProducts, totalProducts: colesTotalProducts } = await getProducts(req, ColesCollection, 10);
       const { products: woolsProducts, totalProducts: woolsTotalProducts } = await getProducts(req, WoolsCollection, 10);
-      const combinedProducts = colesProducts.concat(woolsProducts);
-      const totalProducts = colesTotalProducts + woolsTotalProducts;
+      const { products: igaProducts, totalProducts: igaTotalProducts } = await getProducts(req, IgaCollection, 10);
+      const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
+      const totalProducts = colesTotalProducts + woolsTotalProducts + igaTotalProducts;
       res.status(200).json({
         products: combinedProducts,
         totalProducts: totalProducts,

@@ -1,4 +1,4 @@
-import { AldiCollection, ColesCollection, WoolsCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection } from '../models/product.model.js';
 import Categories from '../models/categories.model.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import { errorHandler } from '../utils/error.js';
@@ -78,6 +78,19 @@ export const getWoolsProducts = async (req, res, next) => {
   }
 };
 
+export const getIgaProducts = async (req, res, next) => {  
+  try {
+    const { products, totalProducts } = await getProducts(req, IgaCollection, 5);
+
+    res.status(200).json({
+      products,
+      totalProducts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 async function getMainCategories(req, collectionName){
   const parsedMainCategory = req.query.mainCategoryName.split(',').map(value => value.trim());
   const regexPattern = parsedMainCategory.join('|');
@@ -138,6 +151,7 @@ export const getComparisonProducts = async (req, res, next) => {
   try {
     const { products: colesProducts } = await getComparisonEngine(req, ColesCollection, 10);
     const { products: woolsProducts } = await getComparisonEngine(req, WoolsCollection, 10);
+    const { products: igaProducts } = await getComparisonEngine(req, IgaCollection, 10);
     const combinedProducts = colesProducts.concat(woolsProducts);
      let finalProducts=[];
     ////////////////
@@ -269,7 +283,8 @@ export const getComparisonProducts_with_Type_Weights = async (req, res, next) =>
   try {
     const { products: colesProducts, weight:colesWeight, productPrice:colesPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection, 10);
     const { products: woolsProducts, weight:woolsWeight, productPrice:woolsPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection, 10);
-    const combinedProducts = colesProducts.concat(woolsProducts);
+    const { products: igaProducts, weight:igaWeight, productPrice:igaPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection, 10);
+    const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
 
     // const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Engine(req, ColesCollection, combinedProducts, colesWeight, colesPrice, 10)
     // const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Engine(req, WoolsCollection, combinedProducts, woolsWeight, woolsPrice, 10);
@@ -319,7 +334,8 @@ export const getComparisonProducts_with_Only_Weights = async (req, res, next) =>
   try {
     const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, ColesCollection, 10)
     const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, WoolsCollection, 10);
-    const combinedWeightProducts = colesWeightProducts.concat(woolsWeightProducts);
+    const { weightProducts: igaWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, IgaCollection, 10);
+    const combinedWeightProducts = colesWeightProducts.concat(igaWeightProducts);
     // Return the result
     res.status(200).json({
         products: combinedWeightProducts

@@ -7,8 +7,10 @@ import Slider from '../components/Slider';
 export default function Home() {
   const [colesProducts, setColesProducts] = useState([]);
   const [woolsProducts, setWoolsProducts] = useState([]);
+  const [igaProducts, setIgaProducts] = useState([]);
   const colesProductsUrl='/api/products/getColesProducts';
   const woolsProductsUrl='/api/products/getWoolsProducts';
+  const igaProductsUrl='/api/products/getIgaProducts';
 
   useEffect(() => {
     const fetchColesProducts = async () => {
@@ -21,9 +23,14 @@ export default function Home() {
       const data = await res.json();
       setWoolsProducts(data.products);            
     };
-
+    const fetchIgaProducts = async () => {
+      const res = await fetch(igaProductsUrl);
+      const data = await res.json();
+      setIgaProducts(data.products);            
+    };
     fetchColesProducts();
     fetchWoolsProducts();
+    fetchIgaProducts();
 
   }, []);
 
@@ -52,7 +59,17 @@ export default function Home() {
               ))}
             </div>
           </div>
-        )}        
+        )}
+        {igaProducts && igaProducts.length > 0 && (
+          <div className='flex flex-col gap-6'>
+            <h2 className='text-2xl font-semibold text-center'>Featured IGA Products</h2>
+            <div className='flex flex-wrap gap-4'>
+              {igaProducts.map((product) => (
+                <PostCard key={product._id} post={product} />
+              ))}
+            </div>
+          </div>
+        )}                
             <Link to={'/search'} className='text-lg text-teal-500 hover:underline text-center'>
               View all Products
             </Link>        

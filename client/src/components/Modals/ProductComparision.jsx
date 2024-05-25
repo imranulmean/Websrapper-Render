@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import PostCard from '../PostCard';
 import { useCart } from '../../context/CartContext';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ProductCard from './ProductCard';
 
 
 export default function ProductComparisionModal({ post, showModal,  setShowModal}) {   
@@ -103,19 +104,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                             {
                                 comparisonProducts.map((product) =>
                                 <div className='col-span-1'>
-                                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                                        <img class="p-1 rounded-t-lg" src={product.productImage} alt="product image" />
-                                        <div class="px-2 pb-2">
-                                            <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{product.productTitle}</h5>
-                                            <div class="flex items-center justify-between">
-                                                <span class="text-sm font-medium text-gray-600 dark:text-white">{product.shop}</span>
-                                            </div>
-                                            <div class="flex items-center justify-between">
-                                                <span class="text-md font-bold text-gray-900 dark:text-white">${product.productPrice}</span>
-                                            </div>
-                                            <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
-                                        </div>                                      
-                                    </div>                                
+                                    <ProductCard product={product} addToCart={addToCart}/>
                                 </div>
                                 )
                             }
@@ -127,19 +116,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                         {
                                 weightsProducts.map((product) =>
                                 <div className='col-span-1'>
-                                    <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                                        <img class="p-1 rounded-t-lg" src={product.productImage} alt="product image" />
-                                        <div class="px-2 pb-2">
-                                            <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{product.productTitle}</h5>
-                                            <div class="flex items-center justify-between">
-                                                <span class="text-sm font-medium text-gray-600 dark:text-white">{product.shop}</span>
-                                            </div>
-                                            <div class="flex items-center justify-between">
-                                                <span class="text-md font-bold text-gray-900 dark:text-white">${product.productPrice}</span>
-                                            </div>
-                                            <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
-                                        </div>                                      
-                                    </div>                                
+                                    <ProductCard product={product} addToCart={addToCart}/>                               
                                 </div>
                                 )
                             }                         
