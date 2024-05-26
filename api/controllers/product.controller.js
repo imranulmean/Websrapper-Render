@@ -200,10 +200,10 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     let searchTermFromUrl= (req.query.searchTermFromUrl || '').trim();
     const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
     let combinedPattern = '';
-    // if(searchTermFromUrl && searchTermFromUrl!==''){
-    //   // productType=[];
-    //   productType.unshift(searchTermFromUrl);
-    // }
+    if(searchTermFromUrl && searchTermFromUrl!==''){
+      // productType=[];
+      productType.unshift(searchTermFromUrl);
+    }
     if (productType && productType.length > 0 && weight) {
         combinedPattern = productType.map(type => `${brandName}.*${type}.*${weight}`).join('|');
     } 
@@ -224,9 +224,9 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     // console.log("productType: ",productType)
     // console.log("weight: ",weight)
     // console.log("combinedPattern: ",combinedPattern)
-     console.log("combinedRegex: ",combinedRegex)
+    //  console.log("combinedRegex: ",combinedRegex)
       let query = {};
-  
+
       // Add combined regex pattern to query for productTitle
       if (combinedPattern) {
           query.productTitle = { $regex: combinedRegex };
@@ -307,9 +307,12 @@ async function getComparisonProducts_only_Weights_Api_Engine(req, collectionName
     const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
     const productTitles = existingProducts.map(product => product.productTitle);
     // Constructing the query object for weight pattern only (excluding already found products)
+    // let regexPattern = new RegExp(weight.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i');
+    let regexPattern =  new RegExp(weight, 'i');
+    console.log(regexPattern);
     let weightQuery = {};
     if (weight) {
-        weightQuery.productTitle = { $regex: new RegExp(weight, 'i') };
+        weightQuery.productTitle = { $regex: regexPattern };
         if (productTitles.length > 0) {
             weightQuery.productTitle.$nin = productTitles;
         }        
@@ -335,7 +338,7 @@ export const getComparisonProducts_with_Only_Weights = async (req, res, next) =>
     const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, ColesCollection, 10)
     const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, WoolsCollection, 10);
     const { weightProducts: igaWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, IgaCollection, 10);
-    const combinedWeightProducts = colesWeightProducts.concat(igaWeightProducts);
+    const combinedWeightProducts = colesWeightProducts.concat(woolsWeightProducts,igaWeightProducts);
     // Return the result
     res.status(200).json({
         products: combinedWeightProducts

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Modal, Button, Spinner } from 'flowbite-react';
+import { Modal, Button, Spinner, Table  } from 'flowbite-react';
 import { useEffect, useRef, useState } from 'react';
 import PostCard from '../PostCard';
 import { useCart } from '../../context/CartContext';
@@ -64,8 +64,8 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
     <>
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size='6xl'>
       <Modal.Header></Modal.Header>
-        <Modal.Body>
-          <div className='grid grid-cols-3 gap-2'>                
+        <Modal.Body className="p-1">
+          <div className='grid grid-cols-3 gap-1'>                
                 {/* Main Product Left*/}
                 <div className='col-span-1 inline-grid'>                 
                  <div>
@@ -88,7 +88,52 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                 </div>
                 {/* Comparision Products Right */}
                 <div className='col-span-2 h-[650px] overflow-y-auto'>
-                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Same Brand Comparision Products</h5>
+                     {/* /////////////////// */}
+                    <div className='flex flex-row'>
+                        <div>
+                            <Table hoverable>
+                                <Table.Head>
+                                    <Table.HeadCell>Same Brand Comparision Products</Table.HeadCell>
+                                </Table.Head>
+                                <Table.Body className="divide-y">
+                                    {
+                                        comparisonProducts.length<1 &&
+                                        <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
+                                    }
+                                    {
+                                        comparisonProducts.map((product) =>
+                                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                            <ProductCard product={product} addToCart={addToCart}/>
+                                        </Table.Row>                                                                        
+                                        )
+                                    }
+                                </Table.Body>
+                            </Table>
+                        </div>
+                        <div>
+                            <Table hoverable>
+                                <Table.Head>
+                                    <Table.HeadCell>Same Weighted Products:</Table.HeadCell>
+                                </Table.Head>
+                                <Table.Body className="divide-y">
+                                    {
+                                        weightsProducts.length<1 &&
+                                        <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
+                                    }
+                                    {
+                                        weightsProducts.map((product) =>
+                                            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                                <ProductCard product={product} addToCart={addToCart}/>
+                                            </Table.Row>                                                                 
+                                        )
+                                    }
+                                </Table.Body>
+                            </Table>
+                        </div>
+                    </div>
+
+                    {/* //////////////////////// */}
+                    {/* <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Same Brand Comparision Products</h5>
                       {
                         loading && 
                         <div className='flex justify-center items-center'>
@@ -107,8 +152,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                     <ProductCard product={product} addToCart={addToCart}/>
                                 </div>
                                 )
-                            }
-                            {/* Similar Weighted Products From Others  */}                           
+                            }                      
                         </div>                        
                     </div>  
                     <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Same Weighted Products:</h5>
@@ -120,10 +164,8 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                 </div>
                                 )
                             }                         
-                    </div>
-
+                    </div> */}
                 </div>
-
           </div>
         </Modal.Body>
       </Modal>
