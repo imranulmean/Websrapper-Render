@@ -88,7 +88,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                 </div>
                 {/* Comparision Products Right */}
                 <div className='col-span-2 h-[650px] overflow-y-auto'>
-                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Comparision Products</h5>
+                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Same Brand Comparision Products</h5>
                       {
                         loading && 
                         <div className='flex justify-center items-center'>
@@ -111,7 +111,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                             {/* Similar Weighted Products From Others  */}                           
                         </div>                        
                     </div>  
-                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Similar Weighted Products:</h5>
+                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Same Weighted Products:</h5>
                     <div className='grid grid-cols-2'>                        
                         {
                                 weightsProducts.map((product) =>

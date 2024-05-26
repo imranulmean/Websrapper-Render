@@ -200,12 +200,12 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     let searchTermFromUrl= (req.query.searchTermFromUrl || '').trim();
     const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
     let combinedPattern = '';
-    if(searchTermFromUrl && searchTermFromUrl!==''){
-      // productType=[];
-      productType.unshift(searchTermFromUrl);
-    }
+    // if(searchTermFromUrl && searchTermFromUrl!==''){
+    //   // productType=[];
+    //   productType.unshift(searchTermFromUrl);
+    // }
     if (productType && productType.length > 0 && weight) {
-        combinedPattern = productType.map(type => `${type}.*${weight}`).join('|');
+        combinedPattern = productType.map(type => `${brandName}.*${type}.*${weight}`).join('|');
     } 
     else{
       combinedPattern='';
@@ -234,7 +234,7 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
   
       // Add product price to the query if available and valid
       if (!isNaN(productPrice)) {
-          query.productPrice = { $lt: productPrice };
+          query.productPrice = { $lte: productPrice };
       }
       let products = await collectionName.find(query).sort({ productPrice: 1 });
       return { 
@@ -398,6 +398,24 @@ export const getComparisonProducts_with_Only_Weights = async (req, res, next) =>
 
 
 // [
+//   {
+//     $group: {
+//       _id: "$subCategoryName",
+//       products: { $push: "$$ROOT" },
+//       totalProducts: { $sum: 1 }
+//     }
+//   },
+//   {
+//     $sort: { _id: 1 }
+//   }
+// ]
+
+// [
+//   {
+//     $match: {
+//       subCategoryName: "Cream"
+//     }
+//   },
 //   {
 //     $group: {
 //       _id: "$subCategoryName",
