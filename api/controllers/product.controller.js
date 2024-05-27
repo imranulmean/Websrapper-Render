@@ -309,7 +309,6 @@ async function getComparisonProducts_only_Weights_Api_Engine(req, collectionName
     // Constructing the query object for weight pattern only (excluding already found products)
     // let regexPattern = new RegExp(weight.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i');
     let regexPattern =  new RegExp(weight, 'i');
-    console.log(regexPattern);
     let weightQuery = {};
     if (weight) {
         weightQuery.productTitle = { $regex: regexPattern };

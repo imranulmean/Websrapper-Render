@@ -62,7 +62,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
 
   return (
     <>
-      <Modal show={showModal} onClose={() => setShowModal(false)} popup size='6xl'>
+      <Modal show={showModal} onClose={() => setShowModal(false)} popup size='8xl'>
       <Modal.Header></Modal.Header>
         <Modal.Body className="p-1">
           <div className='grid grid-cols-3 gap-1'>                
