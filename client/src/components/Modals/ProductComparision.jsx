@@ -68,8 +68,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
           <div className='grid grid-cols-3 gap-1'>                
                 {/* Main Product Left*/}
                 <div className='col-span-1 inline-grid'>                 
-                 <div>
-                    {/* <Button onClick={comparisonApi} size="xs" color="dark">Compare Now</Button> */}
+                 {/* <div>                    
                     <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">Selected Product</h5>
                     <div class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                         <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
@@ -84,11 +83,39 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                         </div>                        
                     </div>
                     <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>                                         
-                  </div>                  
+                  </div>     */}
+                    <Table hoverable>
+                        <Table.Head>
+                            <Table.HeadCell>Selected Product</Table.HeadCell>
+                        </Table.Head>
+                        <Table.Body className="divide-y">
+                            <div>
+                                <div class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                                    <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
+                                    <div class="px-2 pb-2">
+                                        <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{post.productTitle}</h5>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm font-medium text-gray-600 dark:text-white">{post.shop}</span>
+                                        </div>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-md font-bold text-gray-900 dark:text-white">${post.productPrice}</span>
+                                        </div>                            
+                                    </div>                        
+                                </div>
+                                <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>                                         
+                            </div> 
+                        </Table.Body>
+                    </Table>                                
                 </div>
                 {/* Comparision Products Right */}
                 <div className='col-span-2 h-[650px] overflow-y-auto'>
                      {/* /////////////////// */}
+                     {
+                        loading && 
+                        <div className='flex justify-center items-center'>
+                            <Spinner size='xl' />
+                        </div>                        
+                      }                     
                     <div className='flex flex-row'>
                         <div>
                             <Table hoverable>
