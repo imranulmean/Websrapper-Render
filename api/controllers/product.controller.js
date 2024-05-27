@@ -205,7 +205,7 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
       productType.unshift(searchTermFromUrl);
     }
     if (productType && productType.length > 0 && weight) {
-        combinedPattern = productType.map(type => `${brandName}.*${type}.*${weight}`).join('|');
+        combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
     } 
     else{
       combinedPattern='';
