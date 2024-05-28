@@ -200,12 +200,14 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     let searchTermFromUrl= (req.query.searchTermFromUrl || '').trim();
     const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
     let combinedPattern = '';
+    let combinedPattern_BrandLess='';
     if(searchTermFromUrl && searchTermFromUrl!==''){
       // productType=[];
       productType.unshift(searchTermFromUrl);
     }
     if (productType && productType.length > 0 && weight) {
         combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
+        combinedPattern_BrandLess= productType.map(type => `${type}.*${weight}`).join('|');
     } 
     else{
       combinedPattern='';
@@ -216,6 +218,7 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     //     combinedPattern = weight;
     // }    
     const combinedRegex = new RegExp(combinedPattern, 'i');
+    const combinedPattern_BrandLessRegex= new RegExp(combinedPattern_BrandLess, 'i');
     // console.log("searchTerm: ",searchTerm)
     // console.log("searchTermFromUrl: ",searchTermFromUrl)
     // console.log("brandName: ",brandName)
@@ -226,19 +229,25 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     // console.log("combinedPattern: ",combinedPattern)
     //  console.log("combinedRegex: ",combinedRegex)
       let query = {};
+      let query_BrandLess = {};
 
       // Add combined regex pattern to query for productTitle
       if (combinedPattern) {
           query.productTitle = { $regex: combinedRegex };
       }
-  
+      if (combinedPattern_BrandLess) {
+        query_BrandLess.productTitle = { $regex: combinedPattern_BrandLessRegex };
+    }
       // Add product price to the query if available and valid
       if (!isNaN(productPrice)) {
           query.productPrice = { $lte: productPrice };
+          query_BrandLess.productPrice = { $lte: productPrice };
       }
       let products = await collectionName.find(query).sort({ productPrice: 1 });
+      let brandLessProducts = await collectionName.find(query_BrandLess).sort({ productPrice: 1 });
       return { 
         products, 
+        brandLessProducts,
         weight,
         productPrice
       };   
@@ -281,10 +290,10 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
 
 export const getComparisonProducts_with_Type_Weights = async (req, res, next) => {
   try {
-    const { products: colesProducts, weight:colesWeight, productPrice:colesPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection, 10);
-    const { products: woolsProducts, weight:woolsWeight, productPrice:woolsPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection, 10);
+    const { products: colesProducts, brandLessProducts: colesBrandLessProducts, weight:colesWeight, productPrice:colesPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection, 10);
+    const { products: woolsProducts, brandLessProducts: woolsBrandLessProducts, weight:woolsWeight, productPrice:woolsPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection, 10);
     const { products: igaProducts, weight:igaWeight, productPrice:igaPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection, 10);
-    const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
+    const combinedProducts = colesProducts.concat(woolsProducts, igaProducts, colesBrandLessProducts, woolsBrandLessProducts);
 
     // const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Engine(req, ColesCollection, combinedProducts, colesWeight, colesPrice, 10)
     // const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Engine(req, WoolsCollection, combinedProducts, woolsWeight, woolsPrice, 10);
