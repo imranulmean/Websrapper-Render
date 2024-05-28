@@ -6,8 +6,11 @@ import { Card } from "flowbite-react";
 import { RiCloseCircleLine } from "react-icons/ri";
 import { useCart } from "../context/CartContext";
 import { Button } from 'flowbite-react';
+import { useNavigate } from 'react-router-dom';
+
 
 export default function CartComponent({isOpen, setIsOpen}) {
+    const navigate = useNavigate();
     const {cartItemsContext ,removeItemFromCart} = useCart();
     const [cartItems, setCartItems]=useState(cartItemsContext);
     // let localStorageCartItems;
@@ -20,6 +23,10 @@ export default function CartComponent({isOpen, setIsOpen}) {
     }
     const removeItem = (item) => {
         removeItemFromCart(item);
+    }
+    const goCartPage =()=>{
+        toggleDrawer();
+        navigate('/cart');
     }
   return (
         <>            
@@ -59,9 +66,9 @@ export default function CartComponent({isOpen, setIsOpen}) {
                                             })
                                         }
                                     </ul>
-
                             </div>
                         }
+                        <Button onClick={goCartPage} color="dark" className="w-full">Finalize Cart</Button>
                     </div>
                 </div>
             </Drawer>

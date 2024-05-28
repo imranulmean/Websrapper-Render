@@ -237,14 +237,15 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
       }
       if (combinedPattern_BrandLess) {
         query_BrandLess.productTitle = { $regex: combinedPattern_BrandLessRegex };
-    }
+      }
       // Add product price to the query if available and valid
       if (!isNaN(productPrice)) {
           query.productPrice = { $lte: productPrice };
           query_BrandLess.productPrice = { $lte: productPrice };
       }
       let products = await collectionName.find(query).sort({ productPrice: 1 });
-      let brandLessProducts = await collectionName.find(query_BrandLess).sort({ productPrice: 1 });
+      // let brandLessProducts = await collectionName.find(query_BrandLess).sort({ productPrice: 1 });
+      let brandLessProducts =[];
       return { 
         products, 
         brandLessProducts,

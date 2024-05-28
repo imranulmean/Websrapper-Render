@@ -14,7 +14,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
     const [comparisonProducts, setComparisonProducts]=useState([]);
     const [weightsProducts, setWeightsProducts]=useState([]);
     const [loading, setLoading]=useState(false);
-    const searchTerm=post.productTitle;
+    const searchTerm=post.productTitle.replace(' |','');
     const productPrice = post.productPrice.toString(); // Convert productPrice to string
 
     useEffect(() => {
@@ -28,7 +28,6 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
 
     const comparisonApi = async () =>{
         const urlParams = new URLSearchParams(location.search);
-        console.log(urlParams.get('searchTerm'));
         const searchQuery = new URLSearchParams({
             searchTermFromUrl:urlParams.get('searchTerm'),
             searchTerm: searchTerm,
