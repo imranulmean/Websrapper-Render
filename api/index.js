@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import productRoutes from './routes/product.route.js';
 import searchProductRoutes from './routes/search.route.js';
+import cartRoutes from './routes/cart.route.js';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import WebSocket,{ WebSocketServer }  from 'ws';
@@ -31,26 +32,25 @@ const clients= new Map();
 app.use(express.json());
 app.use(cookieParser());
 
-
-
 server.listen(3000, () => {
   console.log('Server is running on port 3000!');
 });
 
 app.use('/api/products', productRoutes);
 app.use('/api/search', searchProductRoutes);
+app.use('/api/cart', cartRoutes);
 app.get('/ping',(req,res)=>{
   res.send("pong");
 })
 
-setInterval(async () => {
-  try {
-    const ping = await axios.get('https://websrapper-render.onrender.com/ping');
-    // console.log(ping.data);
-  } catch (error) {
-    console.error('Error fetching ping:', error);
-  }
-}, 45*1000); 
+// setInterval(async () => {
+//   try {
+//     const ping = await axios.get('https://websrapper-render.onrender.com/ping');
+//     // console.log(ping.data);
+//   } catch (error) {
+//     console.error('Error fetching ping:', error);
+//   }
+// }, 45*1000); 
 
 
 app.use(express.static(path.join(__dirname, '/client/dist')));

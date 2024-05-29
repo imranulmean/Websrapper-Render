@@ -1,4 +1,4 @@
-import { Table } from "flowbite-react";
+import { Button, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 
@@ -8,7 +8,21 @@ export default function CartPage(){
     const [cartItems, setCartItems]=useState(cartItemsContext);
     useEffect(()=>{
         setCartItems(cartItemsContext);        
-    },[cartItemsContext])    
+    },[cartItemsContext])
+
+    const cartCalculation =async() =>{
+        console.log("Start Calculating");
+        const res= await fetch('/api/cart/cartCalculation',{
+            method:"POST",
+            headers:{
+                "content-type":"application/json"
+            },
+            body:JSON.stringify(cartItems)            
+        })
+        const data= await res.json();
+        console.log(data);
+    }
+
     return (
         <>
         <div className="grid grid-cols-3">
@@ -39,7 +53,10 @@ export default function CartPage(){
                     </div>
                 }                             
             </div>
-            <div className="col-span-2">Calculating State</div>
+            <div className="col-span-2">
+                Calculating State
+                <Button color="dark" size="xs" onClick={cartCalculation}>Cart Calculation</Button>
+            </div>
         </div>
 
 

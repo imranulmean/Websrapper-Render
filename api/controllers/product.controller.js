@@ -259,35 +259,6 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
 
 } 
 
-// async function getComparisonProducts_only_Weights_Engine(req, collectionName, combinedProducts, weight, productPrice, limit1){
-
-//   try{
-//     const productTitles = combinedProducts.map(product => product.toObject().productTitle);
-//     // Constructing the query object for weight pattern only (excluding already found products)
-//     let weightQuery = {};
-//     if (weight) {
-//         weightQuery.productTitle = { $regex: new RegExp(weight, 'i') };
-//         if (productTitles.length > 0) {
-//             weightQuery.productTitle.$nin = productTitles;
-//         }
-//     }
-//     if (!isNaN(productPrice)) {
-//         weightQuery.productPrice = { $lt: productPrice };
-//     }
-
-//     // Execute the query for weight pattern
-//     let weightProducts = [];
-//     if (Object.keys(weightQuery).length > 0) {
-//         weightProducts = await collectionName.find(weightQuery).sort({ productPrice: 1 });
-//     }
-//     return {weightProducts}
-//   }
-//   catch(error){
-//     throw error;
-//   }
-
-
-// }
 
 export const getComparisonProducts_with_Type_Weights = async (req, res, next) => {
   try {
