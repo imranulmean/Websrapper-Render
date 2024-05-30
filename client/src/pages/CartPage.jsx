@@ -6,6 +6,7 @@ export default function CartPage(){
 
     const {cartItemsContext ,removeItemFromCart} = useCart();
     const [cartItems, setCartItems]=useState(cartItemsContext);
+    const [cartCalculationItems, setCartCalculationItems]=useState([]);
     useEffect(()=>{
         setCartItems(cartItemsContext);        
     },[cartItemsContext])
@@ -20,7 +21,7 @@ export default function CartPage(){
             body:JSON.stringify(cartItems)            
         })
         const data= await res.json();
-        console.log(data);
+        setCartCalculationItems(data.products)
     }
 
     return (
@@ -55,6 +56,31 @@ export default function CartPage(){
             </div>
             <div className="col-span-2">
                 Calculating State
+                {
+                    cartCalculationItems && cartCalculationItems.length>0 &&
+                    <div className="w-full p-1">
+                            <ul className="py-2 h-[500px] overflow-y-auto divide-y divide-gray-200 dark:divide-gray-700">
+                                {
+                                    cartCalculationItems.map((c) => {
+                                        return (
+                                            <li className="py-3 sm:py-4">
+                                                <div className="flex items-center">
+                                                    <div className="shrink-0">
+                                                        <img alt="Neil image" src={c.productImage} className="rounded-full w-28" />
+                                                    </div>
+                                                    <div className="w-full">
+                                                        <p className="text-sm font-medium text-gray-900 dark:text-white">{c.productTitle}</p>
+                                                        <p className="truncate text-sm text-gray-500 dark:text-gray-400">{c.shop}</p>
+                                                    </div>
+                                                    <div className="inline-flex text-sm items-center text-base font-medium text-gray-900 dark:text-white">${c.productPrice}</div>
+                                                </div>
+                                            </li>
+                                        )
+                                    })
+                                }
+                            </ul>
+                    </div>                    
+                }
                 <Button color="dark" size="xs" onClick={cartCalculation}>Cart Calculation</Button>
             </div>
         </div>

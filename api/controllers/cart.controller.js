@@ -28,8 +28,16 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
             query.productTitle = { $regex: combinedRegex };
         }
         let products = await collectionName.find(query);
+        let filteredProducts=[];
+        for (let product of products){
+            product.productTitle=product.toObject().productTitle.replace(" |",'');
+            let matched= calculateMatchingPercentage(pTitle, product.productTitle);
+            if(matched>80 && product){
+                filteredProducts.push(product)
+            }            
+        }
         return { 
-          products
+          products:filteredProducts,
         };
     } catch (error) {
       throw error;
@@ -40,9 +48,6 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
 function calculateMatchingPercentage(pTitle, text) {
 
   const searchTermWords = pTitle.toLowerCase().match(/\w+/g);
-  console.log("pTitle: ", pTitle)
-  console.log("other Text: ", text)
-  console.log(searchTermWords)
   const textWords = text.toLowerCase().match(/\w+/g);
   
   if (!searchTermWords || !textWords) return 0;
@@ -58,22 +63,25 @@ function calculateMatchingPercentage(pTitle, text) {
 }
 
 export const cartCalculation = async(req, res, next) =>{
-    let combinedProducts;
+
+    let cartCalculationProducts=[];
+    let cartCalculationProducts2=[];
+
     for(let userItem of req.body){
+        let combinedProducts;
         let {productTitle, productPrice}=userItem;
         productTitle=productTitle.replace(" |",'');
+        const {productType, weight ,brandName} = await getProductType_Weights_Brand_productPrice(productTitle);        
         const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection)
         const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection)
         const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection)
         combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
-        
-        for(let product of combinedProducts){
-            product.productTitle=product.toObject().productTitle.replace(" |",'');
-            let matched= calculateMatchingPercentage(productTitle, product.productTitle);
-            console.log("matched: ",matched);
-        }        
+        let productTypeObject = {};
+        productTypeObject[productType] = combinedProducts;
+        cartCalculationProducts2.push(productTypeObject);
     }
+    console.log("cartCalculationProducts2: ",cartCalculationProducts2);
     res.status(200).json({
-        products:combinedProducts
+        products:cartCalculationProducts
     });
 }
