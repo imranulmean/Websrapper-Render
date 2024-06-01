@@ -5,19 +5,15 @@ import { useCart } from "../context/CartContext";
 export default function CartPage(){
 
     const {cartItemsContext ,removeItemFromCart} = useCart();
-    const [cartItems, setCartItems]=useState(cartItemsContext);
     const [cartCalculationItems, setCartCalculationItems]=useState([]);
     const [loading, setLoading]= useState(false);
 
     useEffect(()=>{
-        setCartItems(cartItemsContext);        
-        if(cartItems.length===0){
-            setCartItems(JSON.parse(localStorage.getItem('cartItems')));
-        }
-        if(cartItems.length>0){
+        console.log(cartItemsContext.length)
+        if(cartItemsContext.length>0){
             cartCalculation();
-        }   
-        console.log(cartItems.length)
+        }
+        
     },[cartItemsContext])
 
     const cartCalculation =async() =>{
@@ -29,7 +25,7 @@ export default function CartPage(){
             headers:{
                 "content-type":"application/json"
             },
-            body:JSON.stringify(cartItems)            
+            body:JSON.stringify(cartItemsContext)            
         })
         const data= await res.json();
         console.log(data.products)
