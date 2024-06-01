@@ -101,7 +101,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                         </div>                            
                                     </div>                        
                                 </div>
-                                <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>                                         
+                                <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
                             </div> 
                         </Table.Body>
                     </Table>                                

@@ -1,13 +1,22 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductComparisionModal from './Modals/ProductComparision';
+import { useCart } from "../context/CartContext";
+import { Button, Spinner } from "flowbite-react";
 
 export default function PostCard({ post }) {
+
+    const { addItemToCart } = useCart();
     const [showModal,  setShowModal]= useState(false);
+    
+    const addToCart = (item) => {
+        addItemToCart(item);
+        alert("Added to cart")
+    };
     return (
-        <div class="w-[170px] md:cursor-pointer max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 md:w-[200px]">
+        <div class="w-[170px] max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 md:w-[200px]">
             {/* <Link to={`/post/${post.productUrl}`}> */}
-                <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
+                <img class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
             {/* </Link> */}
             <div class="px-2 pb-2">
                 {/* <Link to="/"> */}
@@ -19,6 +28,11 @@ export default function PostCard({ post }) {
                 <div class="flex items-center justify-between">
                     <span class="text-lg font-bold text-gray-900 dark:text-white">${post.productPrice}</span>
                 </div>
+                <div className='flex flex-col gap-2'>
+                    <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
+                    <Button size="xs" color="dark" onClick={()=>setShowModal(true)}>Compare</Button>
+                </div>
+
             </div>
             <ProductComparisionModal post={post} showModal={showModal} setShowModal={setShowModal}/>
         </div>    
