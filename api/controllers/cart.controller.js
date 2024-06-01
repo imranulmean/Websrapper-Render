@@ -1,7 +1,7 @@
 import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
-
+import fs from 'fs';
 
 async function getProductType_Weights_Brand_productPrice(pTitle){
     let brandName=pTitle.split(' ')[0];
@@ -27,10 +27,23 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
         if (combinedPattern) {
             query.productTitle = { $regex: combinedRegex };
         }
-        let products = await collectionName.find(query);
+        // let products = await collectionName.find(query).select('productTitle productPrice productImage shop');
+        let products = await collectionName.aggregate([
+          { $match: query },
+          { 
+              $group: {
+                  _id: "$productTitle",
+                  productTitle: { $first: "$productTitle" },
+                  productPrice: { $first: "$productPrice" },
+                  productImage: { $first: "$productImage" },
+                  shop: { $first: "$shop" }
+              }
+          }
+        ]);  
         let filteredProducts=[];
         for (let product of products){
-            product.productTitle=product.toObject().productTitle.replace(" |",'');
+            // product.productTitle=product.toObject().productTitle.replace(" |",'');
+            product.productTitle=product.productTitle.replace(" |",'');
             let matched= calculateMatchingPercentage(pTitle, product.productTitle);
             if(matched>80 && product){
                 filteredProducts.push(product)
@@ -62,10 +75,27 @@ function calculateMatchingPercentage(pTitle, text) {
   return (matchingWords / searchTermWords.length) * 100;
 }
 
+function generateCombinations(productGroups) {
+  const combinations = [];
+  const combine = (current, depth) => {
+      if (depth === productGroups.length) {
+          combinations.push(current);
+          return;
+      }
+      for (let product of productGroups[depth]) {
+          combine([...current, product], depth + 1);
+      }
+  };
+  combine([], 0);
+  return combinations;
+}
+
+
+
 export const cartCalculation = async(req, res, next) =>{
 
-    let cartCalculationProducts=[];
-    let cartCalculationProducts2=[];
+    let addedProductIds = new Set();
+    let productGroups = [];
 
     for(let userItem of req.body){
         let combinedProducts;
@@ -75,13 +105,28 @@ export const cartCalculation = async(req, res, next) =>{
         const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection)
         const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection)
         const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection)
-        combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
-        let productTypeObject = {};
-        productTypeObject[productType] = combinedProducts;
-        cartCalculationProducts2.push(productTypeObject);
+        combinedProducts=colesProducts.concat(woolsProducts, igaProducts);   
+      if (productType && productType.length > 0) {
+        for (let type of productType) {
+            let filteredProducts = combinedProducts.filter(product => {
+                if (!addedProductIds.has(product._id.toString())) {
+                    addedProductIds.add(product._id.toString());
+                    return true;
+                }
+                return false;
+            });
+            if (filteredProducts.length > 0) {
+                // productGroups.push(filteredProducts.map(product => ({ [type]: product })));
+                productGroups.push(filteredProducts.map(product => (product)));
+            }
+        }
+      }
     }
-    console.log("cartCalculationProducts2: ",cartCalculationProducts2);
+    // Create combinations
+    const finalProducts = generateCombinations(productGroups);
+    // console.log("finalProducts: ", finalProducts)
+    // fs.writeFileSync('./finalProducts.txt', JSON.stringify(finalProducts, null, 2));    
     res.status(200).json({
-        products:cartCalculationProducts
+        products:finalProducts
     });
 }

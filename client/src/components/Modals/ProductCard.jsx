@@ -12,7 +12,11 @@ export default function ProductCard({product, addToCart}){
                 <div class="flex items-center justify-between">
                     <span class="text-md font-bold text-gray-900 dark:text-white">${product.productPrice}</span>
                 </div>
-                <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
+                {
+                    addToCart && 
+                    <Button size="xs" color="dark" onClick={()=>addToCart(product)}>Add To Cart</Button>
+                }
+                
             </div>                                      
         </div>         
     )
