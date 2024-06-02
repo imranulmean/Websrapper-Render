@@ -19,9 +19,9 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
     return { productType, weight, brandName }
   }
 
-  async function getComparisonProducts_with_Type_Weights_Engine(pTitle,collectionName){  
+  async function getComparisonProducts_with_Type_Weights_Engine(pTitle,collectionName, pPrice){  
     try {
-      
+
       const {productType, weight ,brandName} = await getProductType_Weights_Brand_productPrice(pTitle);        
       let combinedPattern = '';
       if (productType && productType.length > 0 && weight) {
@@ -31,6 +31,7 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
         let query = {};
         if (combinedPattern) {
             query.productTitle = { $regex: combinedRegex };
+            // query.productPrice={$lte:Number(pPrice)}
         }
         // let products = await collectionName.find(query).select('productTitle productPrice productImage shop');
         let products = await collectionName.aggregate([
@@ -107,9 +108,9 @@ export const cartCalculation = async(req, res, next) =>{
         let {productTitle, productPrice}=userItem;
         productTitle=productTitle.replace(" |",'');
         const {productType, weight ,brandName} = await getProductType_Weights_Brand_productPrice(productTitle);        
-        const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection)
-        const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection)
-        const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection)
+        const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
+        const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
+        const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
         combinedProducts=colesProducts.concat(woolsProducts, igaProducts);  
         // if (productType && productType.length > 0) {
         //     for (let type of productType) {
@@ -130,9 +131,16 @@ export const cartCalculation = async(req, res, next) =>{
     }
     // Create combinations
     const finalProducts = generateCombinations(productGroups);
+    // Calculate total price for each combination and include it in the response
+    const combinationsWithTotal = finalProducts.map(combination => {
+      const totalPrice = combination.reduce((acc, product) => acc + product.productPrice, 0);
+      return { combination, totalPrice };
+    });
+    combinationsWithTotal.sort((a, b) => a.totalPrice - b.totalPrice);
+    // combinationsWithTotal.sort((a, b) => b.totalPrice - a.totalPrice);
     // console.log("finalProducts: ", finalProducts)
     // fs.writeFileSync('./finalProducts.txt', JSON.stringify(finalProducts, null, 2));    
     res.status(200).json({
-        products:finalProducts
+        products:combinationsWithTotal
     });
 }
