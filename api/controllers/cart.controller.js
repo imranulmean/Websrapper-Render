@@ -3,9 +3,14 @@ import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import fs from 'fs';
 
+let predictedCategories=[];
+
 async function getProductType_Weights_Brand_productPrice(pTitle){
     let brandName=pTitle.split(' ')[0];
-    let predictedCategories=await getPredictedCategories();
+    
+    if(predictedCategories.length===0){
+        predictedCategories=await getPredictedCategories();
+    }
     const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
     const matchCategories = pTitle.match(predictedCategoriesRegex);
     var productType = matchCategories ? matchCategories : null;
@@ -105,22 +110,23 @@ export const cartCalculation = async(req, res, next) =>{
         const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection)
         const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection)
         const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection)
-        combinedProducts=colesProducts.concat(woolsProducts, igaProducts);   
-      if (productType && productType.length > 0) {
-        for (let type of productType) {
-            let filteredProducts = combinedProducts.filter(product => {
-                if (!addedProductIds.has(product._id.toString())) {
-                    addedProductIds.add(product._id.toString());
-                    return true;
-                }
-                return false;
-            });
-            if (filteredProducts.length > 0) {
-                // productGroups.push(filteredProducts.map(product => ({ [type]: product })));
-                productGroups.push(filteredProducts.map(product => (product)));
-            }
-        }
-      }
+        combinedProducts=colesProducts.concat(woolsProducts, igaProducts);  
+        // if (productType && productType.length > 0) {
+        //     for (let type of productType) {
+        //         let filteredProducts = combinedProducts.filter(product => {
+        //             if (!addedProductIds.has(product._id.toString())) {
+        //                 addedProductIds.add(product._id.toString());
+        //                 return true;
+        //             }
+        //             return false;
+        //         });
+        //         if (filteredProducts.length > 0) {
+        //             // productGroups.push(filteredProducts.map(product => ({ [type]: product })));
+        //             productGroups.push(filteredProducts.map(product => (product)));
+        //         }
+        //     }
+        // }
+        productGroups.push(combinedProducts.map(product => (product)));
     }
     // Create combinations
     const finalProducts = generateCombinations(productGroups);

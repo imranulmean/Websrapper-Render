@@ -35,7 +35,7 @@ export default function CartPage(){
 
     return (
         <div className="grid grid-cols-3">
-            {/* <Button color="dark" size="xs" onClick={cartCalculation}>Cart Calculation</Button> */}
+            <Button color="dark" size="xs" onClick={cartCalculation}>Cart Calculation</Button>
             {/* <div className="col-span-1">
                 {
                     cartItems && cartItems.length > 0 &&
@@ -76,6 +76,7 @@ export default function CartPage(){
                     <div className="flex flex-col flex-wrap md:flex-row gap-2">
                         {
                             cartCalculationItems.map((eachArray, index)=>{
+                                const totalPrice = eachArray.reduce((acc, c) => acc + c.productPrice, 0);
                             return(
                                <ul className="md:w-[300px] p-2 bg-white border border-gray-200 rounded-lg shadow overflow-y-auto divide-y divide-gray-200 dark:divide-gray-700">
                                    <p className="text-sm font-medium text-gray-900 dark:text-white">Combination: {index+1}</p>
@@ -95,11 +96,14 @@ export default function CartPage(){
                                                     </div>
                                                 </li>
                                             )
-                                        })
+                                        })                                        
                                     }
+                                    <div className="flex justify-end">
+                                        <p className="text-sm font-medium text-gray-900 dark:text-white">Total: ${totalPrice.toFixed(2)}</p>
+                                    </div>
+                                    
                                 </ul>
-                            )   
-
+                            )
                             })
                         }
 
