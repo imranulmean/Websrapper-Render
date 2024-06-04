@@ -77,12 +77,9 @@ function levenshteinDistance(a, b) {
       predictedCategories=await getPredictedCategories()
       const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
       let matchCategories = searchTerm.match(predictedCategoriesRegex);
-      // console.log("Search Term:", searchTerm)
-      // console.log("First getting the matchCategories:", matchCategories)
       if(!matchCategories || matchCategories==null){
         matchCategories=[];        
         matchCategories.push(findClosestMatch(searchTerm));
-        // console.log("Second getting the matchCategories:", matchCategories)
       }
       const regexPattern = new RegExp(matchCategories.join('|'), 'gi');   
       let query = {
@@ -125,13 +122,11 @@ function levenshteinDistance(a, b) {
           ],
         }),
       };
-  
       let products = await collectionName.find(query)
         .sort({ productTitle: 1 })
         .skip(startIndex)
-        .limit(limit);
+        .limit(limit);        
       let totalProducts = await collectionName.countDocuments({ productTitle: { $regex: regexPattern } });
-  
       ///////////////////// Advance Search Logic ////////////
       if(totalProducts===0){        
           console.log("Entering the Advance Logic")
@@ -152,11 +147,20 @@ function levenshteinDistance(a, b) {
 
   export const getSearchProducts = async (req, res, next) => {  
     try {
-      const { products: colesProducts, totalProducts: colesTotalProducts } = await getProducts(req, ColesCollection, 10);
-      const { products: woolsProducts, totalProducts: woolsTotalProducts } = await getProducts(req, WoolsCollection, 10);
-      const { products: igaProducts, totalProducts: igaTotalProducts } = await getProducts(req, IgaCollection, 10);
-      const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
-      const totalProducts = colesTotalProducts + woolsTotalProducts + igaTotalProducts;
+      // const { products: colesProducts, totalProducts: colesTotalProducts } = await getProducts(req, ColesCollection, 10);
+      // const { products: woolsProducts, totalProducts: woolsTotalProducts } = await getProducts(req, WoolsCollection, 10);
+      // const { products: igaProducts, totalProducts: igaTotalProducts } = await getProducts(req, IgaCollection, 10);
+      // const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
+      // const totalProducts = colesTotalProducts + woolsTotalProducts + igaTotalProducts;
+      const [colesResult, woolsResult, igaResult] = await Promise.all([
+        getProducts(req, ColesCollection, 10),
+        getProducts(req, WoolsCollection, 10),
+        getProducts(req, IgaCollection, 10)
+    ]);
+    
+    const combinedProducts = colesResult.products.concat(woolsResult.products, igaResult.products);
+    const totalProducts = colesResult.totalProducts + woolsResult.totalProducts + igaResult.totalProducts;
+      
       res.status(200).json({
         products: combinedProducts,
         totalProducts: totalProducts,

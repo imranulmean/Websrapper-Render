@@ -117,25 +117,17 @@ export const cartCalculation = async(req, res, next) =>{
         let {productTitle, productPrice}=userItem;
         productTitle=productTitle.replace(" |",'');
         const {productType, weight ,brandName} = await getProductType_Weights_Brand_productPrice(productTitle);        
-        const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
-        const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
-        const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
-        combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
-        // if (productType && productType.length > 0) {
-        //     for (let type of productType) {
-        //         let filteredProducts = combinedProducts.filter(product => {
-        //             if (!addedProductIds.has(product._id.toString())) {
-        //                 addedProductIds.add(product._id.toString());
-        //                 return true;
-        //             }
-        //             return false;
-        //         });
-        //         if (filteredProducts.length > 0) {
-        //             // productGroups.push(filteredProducts.map(product => ({ [type]: product })));
-        //             productGroups.push(filteredProducts.map(product => (product)));
-        //         }
-        //     }
-        // }
+        // const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
+        // const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
+        // const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
+        // combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
+        const [colesProducts, woolsProducts, igaProducts] = await Promise.all([
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice),
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice),
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
+        ]);
+
+        combinedProducts = colesProducts.products.concat(woolsProducts.products, igaProducts.products);
         productGroups.push(combinedProducts.map(product => (product)));
     }
     // Create combinations
@@ -154,7 +146,17 @@ export const cartCalculation = async(req, res, next) =>{
     if(allSameTotalPrice){
         combinationsWithTotal=all_combination_same_price(combinationsWithTotal);
     }
+    else{
+        // Find the minimum total price
+        const minTotalPrice = Math.min(...combinationsWithTotal.map(item => item.totalPrice));
+        // Filter combinations to include only those with the minimum total price
+        combinationsWithTotal = combinationsWithTotal.filter(item => item.totalPrice === minTotalPrice);
 
+        // If all combinations with the minimum total price have the same price, choose the combination with fewer visited shops
+        if (combinationsWithTotal.length > 1) {
+            combinationsWithTotal = all_combination_same_price(combinationsWithTotal);
+        }
+    }
 
     res.status(200).json({
         products:combinationsWithTotal
