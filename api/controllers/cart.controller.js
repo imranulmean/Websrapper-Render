@@ -96,7 +96,16 @@ function generateCombinations(productGroups) {
   return combinations;
 }
 
-
+function all_combination_same_price(combinationsWithTotal){
+    const shopCounts = combinationsWithTotal.map(item => {
+        let shops = item.combination.map(product => product.shop);
+        let uniqueShops = new Set(shops);
+        return uniqueShops.size;
+    });
+    const minShops = Math.min(...shopCounts);
+    const minShopCombinations = combinationsWithTotal.filter((item, index) => shopCounts[index] === minShops);
+    return minShopCombinations;
+}
 
 export const cartCalculation = async(req, res, next) =>{
 
@@ -111,7 +120,7 @@ export const cartCalculation = async(req, res, next) =>{
         const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
         const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
         const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
-        combinedProducts=colesProducts.concat(woolsProducts, igaProducts);  
+        combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
         // if (productType && productType.length > 0) {
         //     for (let type of productType) {
         //         let filteredProducts = combinedProducts.filter(product => {
@@ -132,14 +141,21 @@ export const cartCalculation = async(req, res, next) =>{
     // Create combinations
     const finalProducts = generateCombinations(productGroups);
     // Calculate total price for each combination and include it in the response
-    const combinationsWithTotal = finalProducts.map(combination => {
+    let combinationsWithTotal = finalProducts.map(combination => {
       const totalPrice = combination.reduce((acc, product) => acc + product.productPrice, 0);
       return { combination, totalPrice };
     });
     combinationsWithTotal.sort((a, b) => a.totalPrice - b.totalPrice);
-    // combinationsWithTotal.sort((a, b) => b.totalPrice - a.totalPrice);
-    // console.log("finalProducts: ", finalProducts)
-    // fs.writeFileSync('./finalProducts.txt', JSON.stringify(finalProducts, null, 2));    
+    //////////// Now Check if All the combinations have same price, Then Choose the combination that have less visited Shops //////////
+    let totalPrices = combinationsWithTotal.map(item => item.totalPrice);
+    let allSameTotalPrice = totalPrices.every(price => price === totalPrices[0]);
+    console.log("All combinations have the same total price:", allSameTotalPrice);
+
+    if(allSameTotalPrice){
+        combinationsWithTotal=all_combination_same_price(combinationsWithTotal);
+    }
+
+
     res.status(200).json({
         products:combinationsWithTotal
     });

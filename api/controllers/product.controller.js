@@ -280,53 +280,53 @@ export const getComparisonProducts_with_Type_Weights = async (req, res, next) =>
   }
 }
 
-async function getComparisonProducts_only_Weights_Api_Engine(req, collectionName, limit1){
+// async function getComparisonProducts_only_Weights_Api_Engine(req, collectionName, limit1){
 
-  try{
-    const existingProducts=req.body;
-    const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
-    const productTitles = existingProducts.map(product => product.productTitle);
-    // Constructing the query object for weight pattern only (excluding already found products)
-    // let regexPattern = new RegExp(weight.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i');
-    let regexPattern =  new RegExp(weight, 'i');
-    let weightQuery = {};
-    if (weight) {
-        weightQuery.productTitle = { $regex: regexPattern };
-        if (productTitles.length > 0) {
-            weightQuery.productTitle.$nin = productTitles;
-        }        
-    }
-    if (!isNaN(productPrice)) {
-        weightQuery.productPrice = { $lt: productPrice };
-    }
+//   try{
+//     const existingProducts=req.body;
+//     const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
+//     const productTitles = existingProducts.map(product => product.productTitle);
+//     // Constructing the query object for weight pattern only (excluding already found products)
+//     // let regexPattern = new RegExp(weight.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i');
+//     let regexPattern =  new RegExp(weight, 'i');
+//     let weightQuery = {};
+//     if (weight) {
+//         weightQuery.productTitle = { $regex: regexPattern };
+//         if (productTitles.length > 0) {
+//             weightQuery.productTitle.$nin = productTitles;
+//         }        
+//     }
+//     if (!isNaN(productPrice)) {
+//         weightQuery.productPrice = { $lt: productPrice };
+//     }
 
-    // Execute the query for weight pattern
-    let weightProducts = [];
-    weightProducts = await collectionName.find(weightQuery).sort({ productPrice: 1 });
-    return {weightProducts}
-  }
-  catch(error){
-    throw error;
-  }
+//     // Execute the query for weight pattern
+//     let weightProducts = [];
+//     weightProducts = await collectionName.find(weightQuery).sort({ productPrice: 1 });
+//     return {weightProducts}
+//   }
+//   catch(error){
+//     throw error;
+//   }
 
 
-}
+// }
 
-export const getComparisonProducts_with_Only_Weights = async (req, res, next) => {
-  try {
-    const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, ColesCollection, 10)
-    const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, WoolsCollection, 10);
-    const { weightProducts: igaWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, IgaCollection, 10);
-    const combinedWeightProducts = colesWeightProducts.concat(woolsWeightProducts,igaWeightProducts);
-    // Return the result
-    res.status(200).json({
-        products: combinedWeightProducts
-    });    
-  } catch (error) {
-    console.log(error);
-    next(error);    
-  }
-}
+// export const getComparisonProducts_with_Only_Weights = async (req, res, next) => {
+//   try {
+//     const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, ColesCollection, 10)
+//     const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, WoolsCollection, 10);
+//     const { weightProducts: igaWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, IgaCollection, 10);
+//     const combinedWeightProducts = colesWeightProducts.concat(woolsWeightProducts,igaWeightProducts);
+//     // Return the result
+//     res.status(200).json({
+//         products: combinedWeightProducts
+//     });    
+//   } catch (error) {
+//     console.log(error);
+//     next(error);    
+//   }
+// }
 
 
 // function calculateMatchingPercentage(searchTerm, text) {

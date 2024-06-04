@@ -104,8 +104,7 @@ export default function CartPage(){
                                     }
                                     <div className="flex justify-end">
                                         <p className="text-sm font-medium text-gray-900 dark:text-white">Total: ${eachArray.totalPrice.toFixed(2)}</p>
-                                    </div>
-                                    
+                                    </div>                                    
                                 </ul>
                             )
                             })
