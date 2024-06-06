@@ -1,4 +1,4 @@
-import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import fs from 'fs';
@@ -121,13 +121,14 @@ export const cartCalculation = async(req, res, next) =>{
         // const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
         // const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
         // combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
-        const [colesProducts, woolsProducts, igaProducts] = await Promise.all([
+        const [ausiProducts, colesProducts, woolsProducts, igaProducts] = await Promise.all([
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, AusiCollection, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
         ]);
 
-        combinedProducts = colesProducts.products.concat(woolsProducts.products, igaProducts.products);
+        combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products,igaProducts.products);
         productGroups.push(combinedProducts.map(product => (product)));
     }
     // Create combinations

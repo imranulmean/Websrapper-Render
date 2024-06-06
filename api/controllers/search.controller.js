@@ -1,4 +1,4 @@
-import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import stringSimilarity from 'string-similarity';
@@ -152,13 +152,14 @@ function levenshteinDistance(a, b) {
       // const { products: igaProducts, totalProducts: igaTotalProducts } = await getProducts(req, IgaCollection, 10);
       // const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
       // const totalProducts = colesTotalProducts + woolsTotalProducts + igaTotalProducts;
-      const [colesResult, woolsResult, igaResult] = await Promise.all([
+      const [ausiResult, colesResult, woolsResult, igaResult] = await Promise.all([
+        getProducts(req, AusiCollection, 10),
         getProducts(req, ColesCollection, 10),
         getProducts(req, WoolsCollection, 10),
         getProducts(req, IgaCollection, 10)
     ]);
     
-    const combinedProducts = colesResult.products.concat(woolsResult.products, igaResult.products);
+    const combinedProducts = ausiResult.products.concat(colesResult.products, woolsResult.products, igaResult.products);
     const totalProducts = colesResult.totalProducts + woolsResult.totalProducts + igaResult.totalProducts;
       
       res.status(200).json({
@@ -187,82 +188,3 @@ function calculateMatchingPercentage(searchTerm, text) {
   });          
   return (matchingWords / searchTermWords.length) * 100;
 }
-
-export const findSimilarProducts = async (req, res, next) => {
-  // console.log(natural.JaroWinklerDistance("Coles Free Range Eggs 12 Pack | 600g", "Lake Macquarie 30 Large Free Range Eggs 1.5kg"));
-  // const colesProducts= await ColesCollection.find();
-  // const woolsProducts= await WoolsCollection.find();
-  // console.log(`colesProducts: ${colesProducts.length}, WoolsProducts: ${woolsProducts.length}`)
-  let colesTitle="Coles Free Range Eggs 12 Pack | 600g";
-  colesTitle= colesTitle.replace("| ", '');
-  let woolsTitle="Liberty Eggs 12 Jumbo Cage Free Eggs 800g";
-  console.log("colesTitle: ", colesTitle)
-  console.log("WoolsTitle: ", woolsTitle)
-  const generalCalculate=calculateMatchingPercentage(colesTitle, woolsTitle);
-  console.log("generalCalculate: ", generalCalculate)  
-  const similarity = stringSimilarity.compareTwoStrings(colesTitle, woolsTitle);
-  console.log("String similarity Library: ",similarity);
-  try {
-      res.status(200).json({
-        products:"Hello"
-      })
-    }
-
-  
-  catch (error) {
-    console.error('Error finding similar products:', error);
-    throw error;
-  }
-}
-
-
-// This will be implemented Later on
-
-//   const predictedCategories=["Milk", "Pasta", "Eggs", "Butter", "Cheese", "Noodles", "Yoghurt", 
-//                            "Margarine", "Sauce", "Ready", "Vegan", "Drink"];
-
-// function findClosestMatch(input) {
-//     let closestMatch = null;
-//     let minDistance = Infinity;
-
-//     // Iterate over predicted categories to find the closest match
-//     predictedCategories.forEach(category => {
-//         const distance = levenshteinDistance(category.toLowerCase(), input.toLowerCase());
-//         if (distance < minDistance) {
-//             minDistance = distance;
-//             closestMatch = category;
-//         }
-//     });
-
-//     return closestMatch;
-// }
-
-// function levenshteinDistance(a, b) {
-//     const distanceMatrix = Array(b.length + 1).fill(null).map(() => Array(a.length + 1).fill(null));
-
-//     for (let i = 0; i <= a.length; i++) {
-//         distanceMatrix[0][i] = i;
-//     }
-
-//     for (let j = 0; j <= b.length; j++) {
-//         distanceMatrix[j][0] = j;
-//     }
-
-//     for (let j = 1; j <= b.length; j++) {
-//         for (let i = 1; i <= a.length; i++) {
-//             const indicator = a[i - 1] === b[j - 1] ? 0 : 1;
-//             distanceMatrix[j][i] = Math.min(
-//                 distanceMatrix[j][i - 1] + 1, // Deletion
-//                 distanceMatrix[j - 1][i] + 1, // Insertion
-//                 distanceMatrix[j - 1][i - 1] + indicator // Substitution
-//             );
-//         }
-//     }
-
-//     return distanceMatrix[b.length][a.length];
-// }
-
-// // Test the function
-// console.log(findClosestMatch("chese")); // Outputs: "Cheese"
-// console.log(findClosestMatch("btr"));   // Outputs: "Butter"
-// console.log(findClosestMatch("yugrut")); // Outputs: "Yoghurt"

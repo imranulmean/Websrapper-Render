@@ -1,4 +1,4 @@
-import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection } from '../models/product.model.js';
 import Categories from '../models/categories.model.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import { errorHandler } from '../utils/error.js';
@@ -99,38 +99,6 @@ async function getMainCategories(req, collectionName){
   return distinctMainCategoryNames
 }
 
-async function getComparisonEngine(req, collectionName, limit1) {
-  try {
-    let searchTerm = req.query.searchTerm || '';
-    /////////////Using the Predicted Category ///////////
-      predictedCategories=await getPredictedCategories();
-      const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
-      const matchCategories = searchTerm.match(predictedCategoriesRegex);
-      const regexPattern = new RegExp(matchCategories.join('|'), 'gi'); 
-      const productPrice = Number(req.query.productPrice);
-      let query = {
-        ...(req.query.productPrice && { productPrice: { $lt: productPrice } }),
-        ...(req.query.searchTerm && { productTitle:{$regex: regexPattern}} )
-        };    
-        let products = await collectionName.find(query).sort({ productPrice: 1 })
-        
-        return { products };      
-    //////////////////////
-
-    // const productPrice = Number(req.query.productPrice);
-    // let mainCategoryNames=await getMainCategories(req, collectionName)
-    // let query = {
-    // ...(req.query.productPrice && { productPrice: { $lte: productPrice } }),
-    // ...(req.query.mainCategoryName && { mainCategoryName:{$in:mainCategoryNames}} )
-    // };    
-    // let products = await collectionName.find(query).sort({ productPrice: 1 })
-    
-    // return { products };
-  } catch (error) {
-    throw error;
-  }
-}
-
       // Function to calculate matching percentage between two strings
 function calculateMatchingPercentage(searchTerm, text) {
   const searchTermWords = searchTerm.toLowerCase().match(/\w+/g);
@@ -146,37 +114,6 @@ function calculateMatchingPercentage(searchTerm, text) {
   });          
   return (matchingWords / searchTermWords.length) * 100;
 }
-
-export const getComparisonProducts = async (req, res, next) => {  
-  try {
-    const { products: colesProducts } = await getComparisonEngine(req, ColesCollection, 10);
-    const { products: woolsProducts } = await getComparisonEngine(req, WoolsCollection, 10);
-    const { products: igaProducts } = await getComparisonEngine(req, IgaCollection, 10);
-    const combinedProducts = colesProducts.concat(woolsProducts);
-     let finalProducts=[];
-    ////////////////
-      // Loop through combinedProducts
-      combinedProducts.forEach((product1) => {
-        const parsedProduct=product1.toObject();
-        const matchingPercentage = calculateMatchingPercentage(req.query.searchTerm, parsedProduct.productTitle);
-        // If matching percentage is more than 60%, add to finalProducts array
-        // console.log("searchTerm: ", req.query.searchTerm)
-        // console.log("Current Name: ", parsedProduct.productTitle)
-        // console.log("matchingPercentage: ", matchingPercentage)
-        if (matchingPercentage > 50) {
-            finalProducts.push(product1);
-        }
-      });
-
-    ///////////////
-    res.status(200).json({
-      products: finalProducts,
-    });
-  } catch (error) {
-    console.log(error);
-    next(error);
-  }
-};
 
 async function getProductType_Weights_Brand_productPrice(req){
   let searchTerm = req.query.searchTerm || '';
@@ -261,15 +198,12 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
 
 export const getComparisonProducts_with_Type_Weights = async (req, res, next) => {
   try {
+    const { products: ausiProducts, weight:ausiWeight, productPrice:ausiPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, AusiCollection, 10);    
     const { products: colesProducts, weight:colesWeight, productPrice:colesPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection, 10);
     const { products: woolsProducts, weight:woolsWeight, productPrice:woolsPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection, 10);
-    const { products: igaProducts, weight:igaWeight, productPrice:igaPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection, 10);
-    const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
+    const { products: igaProducts, weight:igaWeight, productPrice:igaPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection, 10);    
+    const combinedProducts = ausiProducts.concat(colesProducts, woolsProducts, igaProducts);
 
-    // const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Engine(req, ColesCollection, combinedProducts, colesWeight, colesPrice, 10)
-    // const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Engine(req, WoolsCollection, combinedProducts, woolsWeight, woolsPrice, 10);
-    // const combinedWeightProducts = colesWeightProducts.concat(woolsWeightProducts);
-    // const allCombinedProducts=combinedProducts.concat(combinedWeightProducts);
     // Return the result
     res.status(200).json({
         products: combinedProducts
@@ -279,54 +213,6 @@ export const getComparisonProducts_with_Type_Weights = async (req, res, next) =>
     next(error);    
   }
 }
-
-// async function getComparisonProducts_only_Weights_Api_Engine(req, collectionName, limit1){
-
-//   try{
-//     const existingProducts=req.body;
-//     const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
-//     const productTitles = existingProducts.map(product => product.productTitle);
-//     // Constructing the query object for weight pattern only (excluding already found products)
-//     // let regexPattern = new RegExp(weight.split(' ').map(term => `(?=.*\\b${term})`).join(''), 'i');
-//     let regexPattern =  new RegExp(weight, 'i');
-//     let weightQuery = {};
-//     if (weight) {
-//         weightQuery.productTitle = { $regex: regexPattern };
-//         if (productTitles.length > 0) {
-//             weightQuery.productTitle.$nin = productTitles;
-//         }        
-//     }
-//     if (!isNaN(productPrice)) {
-//         weightQuery.productPrice = { $lt: productPrice };
-//     }
-
-//     // Execute the query for weight pattern
-//     let weightProducts = [];
-//     weightProducts = await collectionName.find(weightQuery).sort({ productPrice: 1 });
-//     return {weightProducts}
-//   }
-//   catch(error){
-//     throw error;
-//   }
-
-
-// }
-
-// export const getComparisonProducts_with_Only_Weights = async (req, res, next) => {
-//   try {
-//     const { weightProducts: colesWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, ColesCollection, 10)
-//     const { weightProducts: woolsWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, WoolsCollection, 10);
-//     const { weightProducts: igaWeightProducts } = await getComparisonProducts_only_Weights_Api_Engine(req, IgaCollection, 10);
-//     const combinedWeightProducts = colesWeightProducts.concat(woolsWeightProducts,igaWeightProducts);
-//     // Return the result
-//     res.status(200).json({
-//         products: combinedWeightProducts
-//     });    
-//   } catch (error) {
-//     console.log(error);
-//     next(error);    
-//   }
-// }
 
 
 // [
