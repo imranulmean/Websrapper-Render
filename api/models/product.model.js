@@ -19,9 +19,14 @@ const productSchema = new mongoose.Schema(
   // { timestamps: true }
 );
 
+// const AldiCollection = mongoose.model('aldiproducts', productSchema);
+// const ColesCollection = mongoose.model('colesproducts2', productSchema);
+// const WoolsCollection = mongoose.model('woolsproducts2', productSchema);
+// const IgaCollection = mongoose.model('igaproducts2', productSchema);
+
 const AldiCollection = mongoose.model('aldiproducts', productSchema);
-const ColesCollection = mongoose.model('colesproducts2', productSchema);
-const WoolsCollection = mongoose.model('woolsproducts2', productSchema);
+const ColesCollection = mongoose.model('colescheeseproducts2', productSchema);
+const WoolsCollection = mongoose.model('woolseggsproducts2', productSchema);
 const IgaCollection = mongoose.model('igaproducts2', productSchema);
 
 export { AldiCollection, ColesCollection, WoolsCollection, IgaCollection };

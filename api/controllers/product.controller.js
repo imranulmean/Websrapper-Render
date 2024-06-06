@@ -329,56 +329,6 @@ export const getComparisonProducts_with_Type_Weights = async (req, res, next) =>
 // }
 
 
-// function calculateMatchingPercentage(searchTerm, text) {
-//   const searchTermWords = searchTerm.toLowerCase().match(/\w+/g);
-//   console.log(searchTermWords)
-//   const textWords = text.toLowerCase().match(/\w+/g);
-  
-//   if (!searchTermWords || !textWords) return 0;
-  
-//   let matchingWords = 0;
-//   searchTermWords.forEach(word => {
-//       if (textWords.includes(word)) {
-//           matchingWords++;
-//       }
-//   });
-  
-//   return (matchingWords / searchTermWords.length) * 100;
-// }
-
-// var searchTerm="Coles Free Range Eggs 12 Pack | 700g"
-// var text="Woolworths 12 Extra Large Cage Free Eggs 700g"
-// var matched=calculateMatchingPercentage(searchTerm, text)
-// console.log(matched)
-
-///////////////////////////////////////////////////
-// var searchTerm = "Devondale Full Cream Long Life Milk 6 pack | 1.2L"
-// var milkMatch = searchTerm.match(/\b(milk)\b/i);
-// var milkType = milkMatch ? milkMatch[1] : null;
-// var weightMatch = searchTerm.match(/(\d+(\.\d+)?(kg|L))/i);
-// var weight = weightMatch ? weightMatch[1] : null;
-
-// var otherStrings = [
-//     "A2 Dairy Full Cream Milk | 1L",
-//     "Devondale Full Cream Milk | 2L",
-//     "Devondale Full Cream Milk | 2L",
-//     "Green Pastures Full Cream Milk | 2L",
-//     "Pura Full Cream Milk | 2L",
-//     "Green Pastures Full Cream Milk | 2L",
-//     "Great Ocean Road Fresh Full Cream Milk | 2L",
-//     "East Coast Sustainable Dairy Full Cream Milk | 2L",
-//     "Devondale Full Cream Long Life Milk 6 pack | 1.2L",
-//     "Pauls Zymil Gluten free & lactose Free Full Cream Milk | 2L",
-//     "Dairy Farmers Full Cream Milk 1l"
-// ];
-
-// // Filtering otherStrings array based on milkType and weight
-// var filteredStrings = otherStrings.filter(str => {
-//     return str.match(new RegExp(milkType, 'i')) && str.match(new RegExp(weight, 'i'));
-// });
-// console.log(filteredStrings);
-
-
 // [
 //   {
 //     $group: {

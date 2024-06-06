@@ -48,7 +48,7 @@ setInterval(async () => {
     const ping = await axios.get('https://websrapper-render.onrender.com/ping');
     // console.log(ping.data);
   } catch (error) {
-    console.error('Error fetching ping:', error);
+    // console.error('Error fetching ping:', error);
   }
 }, 45*1000); 
 
