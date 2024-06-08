@@ -138,7 +138,7 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     let searchTermFromUrl= (req.query.searchTermFromUrl || '').trim();
     const {productType, weight ,brandName, productPrice} = await getProductType_Weights_Brand_productPrice(req);
     let combinedPattern = '';
-    if(searchTermFromUrl && searchTermFromUrl!==''){
+    if(searchTermFromUrl && searchTermFromUrl!=='' && productType && productType.length){
       productType.unshift(searchTermFromUrl);
     }
     if (productType && productType.length > 0 && weight) {
