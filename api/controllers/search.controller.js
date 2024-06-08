@@ -128,12 +128,12 @@ function levenshteinDistance(a, b) {
         .limit(limit);        
       let totalProducts = await collectionName.countDocuments({ productTitle: { $regex: regexPattern } });
       ///////////////////// Advance Search Logic ////////////
-      if(totalProducts===0){        
-          console.log("Entering the Advance Logic")
-          const { products: advanceSearchProducts, totalProducts: advanceSearchTotalProducts }=await advanceSearchEngine(req, collectionName, limit, startIndex)
-          products=advanceSearchProducts;
-          totalProducts=advanceSearchTotalProducts;          
-      }
+      // if(totalProducts===0){        
+      //     console.log("Entering the Advance Logic")
+      //     const { products: advanceSearchProducts, totalProducts: advanceSearchTotalProducts }=await advanceSearchEngine(req, collectionName, limit, startIndex)
+      //     products=advanceSearchProducts;
+      //     totalProducts=advanceSearchTotalProducts;          
+      // }
       //////////////////////////////////////////////
   
       return {
@@ -159,7 +159,8 @@ function levenshteinDistance(a, b) {
         getProducts(req, IgaCollection, 10)
     ]);
     
-    const combinedProducts = ausiResult.products.concat(colesResult.products, woolsResult.products, igaResult.products);
+    // const combinedProducts = ausiResult.products.concat(colesResult.products, woolsResult.products, igaResult.products);
+    const combinedProducts = colesResult.products.concat(woolsResult.products, igaResult.products);
     const totalProducts = colesResult.totalProducts + woolsResult.totalProducts + igaResult.totalProducts;
       
       res.status(200).json({
