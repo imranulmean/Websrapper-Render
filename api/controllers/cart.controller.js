@@ -27,6 +27,10 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
       if (productType && productType.length > 0 && weight) {
           combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
       }
+      if(!productType || productType==null ){
+        // combinedPattern='';
+        combinedPattern =`^${brandName}.*${weight}`;
+      }      
       const combinedRegex = new RegExp(combinedPattern, 'i');
         let query = {};
         if (combinedPattern) {
@@ -51,7 +55,8 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
             // product.productTitle=product.toObject().productTitle.replace(" |",'');
             product.productTitle=product.productTitle.replace(" |",'');
             let matched= calculateMatchingPercentage(pTitle, product.productTitle);
-            if(matched>80 && product){
+
+            if(matched>80 && product){             
                 filteredProducts.push(product)
             }            
         }

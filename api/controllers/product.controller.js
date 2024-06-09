@@ -150,28 +150,24 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
       }
       if(queryType==="brand_weight"){
         combinedPattern = productType.map(type => `^${brandName}.*${weight}`).join('|');
-      }      
-      
+      }            
         // combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
-    } 
-    else{
-      combinedPattern='';
+    }     
+    if(!productType || productType==null || req.query.mainCategoryName==="Confectionary"){
+      // combinedPattern='';
+      combinedPattern =`^${brandName}.*${weight}`;
     }
-    // else if (productType && productType.length > 0) {
-    //     combinedPattern = productType.join('|');
-    // } else if (weight) {
-    //     combinedPattern = weight;
-    // }    
     const combinedRegex = new RegExp(combinedPattern, 'i');
     // console.log("searchTerm: ",searchTerm)
     // console.log("searchTermFromUrl: ",searchTermFromUrl)
     // console.log("brandName: ",brandName)
     // console.log("productPrice: ",productPrice)
     // console.log("predictedCategoriesRegex: ",predictedCategoriesRegex)
-    // console.log("productType: ",productType)
+    console.log("productType: ",productType)
     // console.log("weight: ",weight)
     // console.log("combinedPattern: ",combinedPattern)
-    //  console.log("combinedRegex: ",combinedRegex)
+     console.log("combinedRegex: ",combinedRegex)
+
       let query = {};
 
       // Add combined regex pattern to query for productTitle
