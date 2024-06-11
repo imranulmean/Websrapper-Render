@@ -56,7 +56,7 @@ export default function CartComponent({isOpen, setIsOpen}) {
                                                             </div>
                                                             <div className="w-full">
                                                                 <p className="text-sm font-medium text-gray-900 dark:text-white">{c.productTitle}</p>
-                                                                <p className="truncate text-sm text-gray-500 dark:text-gray-400">{c.shop}</p>
+                                                                <p className="truncate font-bold text-sm text-green-700 dark:text-gray-400">{c.shop}</p>
                                                             </div>
                                                             <div className="inline-flex text-sm items-center text-base font-medium text-gray-900 dark:text-white">${c.productPrice}</div>
                                                             <button onClick={() => removeItem(c)}><RiCloseCircleLine /></button>

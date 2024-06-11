@@ -1,4 +1,5 @@
-import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection,
+        ColesCollection2, WoolsCollection2, IgaCollection2 } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import fs from 'fs';
@@ -20,8 +21,7 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
   }
 
   async function getComparisonProducts_with_Type_Weights_Engine(pTitle,collectionName, pPrice){  
-    try {
-
+    try {        
       const {productType, weight ,brandName} = await getProductType_Weights_Brand_productPrice(pTitle);        
       let combinedPattern = '';
       if (productType && productType.length > 0 && weight) {
@@ -30,8 +30,11 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
       if(!productType || productType==null ){
         // combinedPattern='';
         combinedPattern =`^${brandName}.*${weight}`;
-      }      
-      const combinedRegex = new RegExp(combinedPattern, 'i');
+      }
+      if(!weight || weight==null){
+        combinedPattern =pTitle;
+      }
+      const combinedRegex = new RegExp(combinedPattern, 'i');      
         let query = {};
         if (combinedPattern) {
             query.productTitle = { $regex: combinedRegex };
@@ -49,14 +52,14 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
                   shop: { $first: "$shop" }
               }
           }
-        ]);  
+        ]);
         let filteredProducts=[];
         for (let product of products){
             // product.productTitle=product.toObject().productTitle.replace(" |",'');
             product.productTitle=product.productTitle.replace(" |",'');
             let matched= calculateMatchingPercentage(pTitle, product.productTitle);
 
-            if(matched>80 && product){             
+            if(matched>90 && product){
                 filteredProducts.push(product)
             }            
         }
@@ -112,28 +115,42 @@ function all_combination_same_price(combinationsWithTotal){
     return minShopCombinations;
 }
 
+function groupByShop(data) {
+    data.sort((a, b) => {
+        if (a.shop < b.shop) return -1;
+        if (a.shop > b.shop) return 1;
+        return 0;
+    });
+    return data;
+}
+
 export const cartCalculation = async(req, res, next) =>{
 
     let addedProductIds = new Set();
     let productGroups = [];
+    let singleCombination=[];
 
     for(let userItem of req.body){
         let combinedProducts;
         let {productTitle, productPrice}=userItem;
-        productTitle=productTitle.replace(" |",'');
-        const {productType, weight ,brandName} = await getProductType_Weights_Brand_productPrice(productTitle);        
+        productTitle=productTitle.replace(" |",'');     
         // const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
         // const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
         // const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
         // combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
-        const [ausiProducts, colesProducts, woolsProducts, igaProducts] = await Promise.all([
+        const [ausiProducts, colesProducts, woolsProducts, igaProducts,
+                colesProducts2, woolsProducts2, igaProducts2] = await Promise.all([
             getComparisonProducts_with_Type_Weights_Engine(productTitle, AusiCollection, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice),
-            getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice),
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection2, productPrice),
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection2, productPrice),
+            getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection2, productPrice)
         ]);
 
-        combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products,igaProducts.products);
+        combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
+                                                    colesProducts2.products, woolsProducts2.products, igaProducts2.products);
         productGroups.push(combinedProducts.map(product => (product)));
     }
     // Create combinations
@@ -141,6 +158,7 @@ export const cartCalculation = async(req, res, next) =>{
     // Calculate total price for each combination and include it in the response
     let combinationsWithTotal = finalProducts.map(combination => {
       const totalPrice = combination.reduce((acc, product) => acc + product.productPrice, 0);
+      combination=groupByShop(combination);
       return { combination, totalPrice };
     });
     combinationsWithTotal.sort((a, b) => a.totalPrice - b.totalPrice);
@@ -151,6 +169,7 @@ export const cartCalculation = async(req, res, next) =>{
 
     if(allSameTotalPrice){
         combinationsWithTotal=all_combination_same_price(combinationsWithTotal);
+        singleCombination.push(combinationsWithTotal[0])
     }
     else{
         // Find the minimum total price
@@ -162,9 +181,10 @@ export const cartCalculation = async(req, res, next) =>{
         if (combinationsWithTotal.length > 1) {
             combinationsWithTotal = all_combination_same_price(combinationsWithTotal);
         }
+        singleCombination.push(combinationsWithTotal[0])
     }
 
     res.status(200).json({
-        products:combinationsWithTotal
+        products:singleCombination
     });
 }

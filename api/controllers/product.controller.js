@@ -1,4 +1,5 @@
-import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection, 
+        ColesCollection2, WoolsCollection2, IgaCollection2   } from '../models/product.model.js';
 import Categories from '../models/categories.model.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import { errorHandler } from '../utils/error.js';
@@ -163,10 +164,10 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
     // console.log("brandName: ",brandName)
     // console.log("productPrice: ",productPrice)
     // console.log("predictedCategoriesRegex: ",predictedCategoriesRegex)
-    console.log("productType: ",productType)
+    // console.log("productType: ",productType)
     // console.log("weight: ",weight)
     // console.log("combinedPattern: ",combinedPattern)
-     console.log("combinedRegex: ",combinedRegex)
+    //  console.log("combinedRegex: ",combinedRegex)
 
       let query = {};
 
@@ -194,12 +195,24 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
 
 export const getComparisonProducts_with_Type_Weights = async (req, res, next) => {
   try {
-    const { products: ausiProducts, weight:ausiWeight, productPrice:ausiPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, AusiCollection, 10);    
-    const { products: colesProducts, weight:colesWeight, productPrice:colesPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection, 10);
-    const { products: woolsProducts, weight:woolsWeight, productPrice:woolsPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection, 10);
-    const { products: igaProducts, weight:igaWeight, productPrice:igaPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection, 10);    
-    const combinedProducts = ausiProducts.concat(colesProducts, woolsProducts, igaProducts);
-
+    // const { products: ausiProducts, weight:ausiWeight, productPrice:ausiPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, AusiCollection, 10);
+    // const { products: colesProducts, weight:colesWeight, productPrice:colesPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection, 10);
+    // const { products: woolsProducts, weight:woolsWeight, productPrice:woolsPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection, 10);
+    // const { products: igaProducts, weight:igaWeight, productPrice:igaPrice } = await getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection, 10);
+    // const combinedProducts = ausiProducts.concat(colesProducts, woolsProducts, igaProducts);
+    const [ausiProducts, colesProducts, woolsProducts, igaProducts,
+            colesProducts2, woolsProducts2, igaProducts2]= await Promise.all([
+      getComparisonProducts_with_Type_Weights_Engine(req, AusiCollection, 10),
+      getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection, 10),
+      getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection, 10),
+      getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection, 10),
+      getComparisonProducts_with_Type_Weights_Engine(req, ColesCollection2, 10),
+      getComparisonProducts_with_Type_Weights_Engine(req, WoolsCollection2, 10),
+      getComparisonProducts_with_Type_Weights_Engine(req, IgaCollection2, 10),
+    ]);
+    
+    const combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
+                                                      colesProducts2.products, woolsProducts2.products, igaProducts2.products);
     // Return the result
     res.status(200).json({
         products: combinedProducts

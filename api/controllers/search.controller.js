@@ -1,4 +1,5 @@
-import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection } from '../models/product.model.js';
+import { AldiCollection, ColesCollection, WoolsCollection, IgaCollection, AusiCollection,
+          ColesCollection2, WoolsCollection2, IgaCollection2 } from '../models/product.model.js';
 import { errorHandler } from '../utils/error.js';
 import {getPredictedCategories} from './predictedCategories.js';
 import stringSimilarity from 'string-similarity';
@@ -7,25 +8,6 @@ import stringSimilarity from 'string-similarity';
 //                           "Chocolate", ]
 
 let predictedCategories=[];
-
- function generateCombinations(words) {
-    let combinations = [];
-    
-    // Single-word combinations
-    if(words.length===1){
-        for (let i = 0; i < words.length; i++) {
-            combinations.push(words[i]);
-        }
-    }
-
-    // Generate combinations of length 2
-    for (let i = 0; i < words.length; i++) {
-        for (let j = i + 1; j < words.length; j++) {
-            combinations.push(words[i] + " " + words[j]);
-        }
-    }    
-    return combinations;
-  }
 
 
   function findClosestMatch(input) {
@@ -152,15 +134,21 @@ function levenshteinDistance(a, b) {
       // const { products: igaProducts, totalProducts: igaTotalProducts } = await getProducts(req, IgaCollection, 10);
       // const combinedProducts = colesProducts.concat(woolsProducts, igaProducts);
       // const totalProducts = colesTotalProducts + woolsTotalProducts + igaTotalProducts;
-      const [ausiResult, colesResult, woolsResult, igaResult] = await Promise.all([
+      const [ausiResult, colesResult, woolsResult, igaResult, 
+              colesResult2, woolsResult2, igaResult2 ] = await Promise.all([
         getProducts(req, AusiCollection, 10),
         getProducts(req, ColesCollection, 10),
         getProducts(req, WoolsCollection, 10),
-        getProducts(req, IgaCollection, 10)
+        getProducts(req, IgaCollection, 10),
+        getProducts(req, ColesCollection2, 10),
+        getProducts(req, WoolsCollection2, 10),
+        getProducts(req, IgaCollection2, 10),
+
     ]);
     
-    // const combinedProducts = ausiResult.products.concat(colesResult.products, woolsResult.products, igaResult.products);
-    const combinedProducts = colesResult.products.concat(woolsResult.products, igaResult.products);
+    const combinedProducts = ausiResult.products.concat(colesResult.products, woolsResult.products, igaResult.products,
+                                                      colesResult2.products, woolsResult2.products, igaResult2.products);
+    // const combinedProducts = colesResult.products.concat(woolsResult.products, igaResult.products);
     const totalProducts = colesResult.totalProducts + woolsResult.totalProducts + igaResult.totalProducts;
       
       res.status(200).json({
@@ -175,17 +163,3 @@ function levenshteinDistance(a, b) {
 
   /////////////////////Getting The Similar Products //////////
 
-function calculateMatchingPercentage(searchTerm, text) {
-  const searchTermWords = searchTerm.toLowerCase().match(/\w+/g);
-  const textWords = text.toLowerCase().match(/\w+/g);
-  
-  if (!searchTermWords || !textWords) return 0;
-  
-  let matchingWords = 0;
-  searchTermWords.forEach(word => {
-      if (textWords.includes(word)) {
-          matchingWords++;
-      }
-  });          
-  return (matchingWords / searchTermWords.length) * 100;
-}
