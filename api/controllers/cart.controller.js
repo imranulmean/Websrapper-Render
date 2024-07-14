@@ -8,7 +8,7 @@ let predictedCategories=[];
 
 async function getProductType_Weights_Brand_productPrice(pTitle){
     let brandName=pTitle.split(' ')[0];
-    
+    brandName=brandName.split("-")[0];
     if(predictedCategories.length===0){
         predictedCategories=await getPredictedCategories();
     }
@@ -27,29 +27,27 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
     try {   
       const {productType, weight , brandName, packSize} = await getProductType_Weights_Brand_productPrice(pTitle);        
       let combinedPattern = '';
-       console.log(pTitle) 
-       console.log(productType) 
-       console.log(weight) 
-       console.log(brandName) 
-       console.log(packSize) 
       if (productType && productType.length > 0 && weight && packSize) {
             combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}.*${packSize}`).join('|');
+         
         }
 
-      if (productType && productType.length > 0 && weight) {
+      else if (productType && productType.length > 0 && weight) {
           combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
+        
       }
-      if(!productType || productType==null ){
-        // combinedPattern='';
+      else if(!productType || productType==null ){
+        
         combinedPattern =`^${brandName}.*${weight}`;
+        
       }
-      if(!weight || weight==null){
+      else if(!weight || weight==null){
         combinedPattern =pTitle;
       }
       const combinedRegex = new RegExp(combinedPattern, 'i');      
         let query = {};
         if (combinedPattern) {
-            query.productTitle = { $regex: combinedRegex };
+            query.productTitle = { $regex: combinedRegex };             
             // query.productPrice={$lte:Number(pPrice)}
         }
         // let products = await collectionName.find(query).select('productTitle productPrice productImage shop');
@@ -67,11 +65,11 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
         ]);
         let filteredProducts=[];
         for (let product of products){
-            // product.productTitle=product.toObject().productTitle.replace(" |",'');
+            
             product.productTitle=product.productTitle.replace(" |",'');
             let matched= calculateMatchingPercentage(pTitle, product.productTitle);
 
-            if(matched>90 && product){
+            if(matched>60 && product){
                 filteredProducts.push(product)
             }            
         }
@@ -160,7 +158,7 @@ export const cartCalculation = async(req, res, next) =>{
             getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection2, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection2, productPrice)
         ]);
-
+        console.log("woolsProducts2.products: ",woolsProducts2.products)
         combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
                                                     colesProducts2.products, woolsProducts2.products, igaProducts2.products);
         productGroups.push(combinedProducts.map(product => (product)));
