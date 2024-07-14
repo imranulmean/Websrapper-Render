@@ -17,13 +17,25 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
     var productType = matchCategories ? matchCategories : null;
     var weightMatch = pTitle.match(/(\d+(\.\d+)?(kg|L|gm|g|ml))/i);
     var weight = weightMatch ? weightMatch[1] : null;
-    return { productType, weight, brandName }
+    // Extract the pack size if it exists after the weight and can be either "pack" or "packs"
+    var packSizeMatch = weightMatch && pTitle.substring(weightMatch.index + weightMatch[0].length).match(/(\d+\s*packs?)/i);
+    var packSize = packSizeMatch ? packSizeMatch[1] : null;
+    return { productType, weight, brandName, packSize };
   }
 
   async function getComparisonProducts_with_Type_Weights_Engine(pTitle,collectionName, pPrice){  
-    try {        
-      const {productType, weight ,brandName} = await getProductType_Weights_Brand_productPrice(pTitle);        
+    try {   
+      const {productType, weight , brandName, packSize} = await getProductType_Weights_Brand_productPrice(pTitle);        
       let combinedPattern = '';
+       console.log(pTitle) 
+       console.log(productType) 
+       console.log(weight) 
+       console.log(brandName) 
+       console.log(packSize) 
+      if (productType && productType.length > 0 && weight && packSize) {
+            combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}.*${packSize}`).join('|');
+        }
+
       if (productType && productType.length > 0 && weight) {
           combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
       }
