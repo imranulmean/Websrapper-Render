@@ -68,8 +68,10 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
             
             product.productTitle=product.productTitle.replace(" |",'');
             let matched= calculateMatchingPercentage(pTitle, product.productTitle);
-
-            if(matched>60 && product){
+            console.log("pTitle: ", pTitle)
+            console.log("matched: ", matched)
+            console.log("product: ", product.productTitle)
+            if(matched>76 && product){
                 filteredProducts.push(product)
             }            
         }

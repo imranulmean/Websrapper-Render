@@ -46,7 +46,8 @@ app.get('/ping',(req,res)=>{
 setInterval(async () => {
   try {
     const ping = await axios.get('https://websrapper-render.onrender.com/ping');
-    // console.log(ping.data);
+    const pythonFlaskPing = await axios.get('https://python-flask-image-processing.onrender.com/api/ping');
+    //  console.log(pythonFlaskPing.data);
   } catch (error) {
     // console.error('Error fetching ping:', error);
   }

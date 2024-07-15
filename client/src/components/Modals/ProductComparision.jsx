@@ -5,9 +5,10 @@ import PostCard from '../PostCard';
 import { useCart } from '../../context/CartContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
-
+import DataTable from 'react-data-table-component';
 
 export default function ProductComparisionModal({ post, showModal,  setShowModal}) {   
+
     const location = useLocation();
     const { addItemToCart } = useCart();
     const initialRender = useRef(true);
@@ -103,6 +104,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                     </Table>                                
                 </div>
                 {/* Comparision Products Right */}
+               
                 <div className='col-span-3 h-[650px] overflow-y-auto'>
                      {/* /////////////////// */}
                      {
