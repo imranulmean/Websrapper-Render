@@ -159,8 +159,7 @@ export const cartCalculation = async(req, res, next) =>{
             getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection2, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection2, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection2, productPrice)
-        ]);
-        console.log("woolsProducts2.products: ",woolsProducts2.products)
+        ]);       
         combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
                                                     colesProducts2.products, woolsProducts2.products, igaProducts2.products);
         productGroups.push(combinedProducts.map(product => (product)));
