@@ -5,7 +5,6 @@ import PostCard from '../PostCard';
 import { useCart } from '../../context/CartContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ProductCard from './ProductCard';
-import DataTable from 'react-data-table-component';
 
 export default function ProductComparisionModal({ post, showModal,  setShowModal}) {   
 

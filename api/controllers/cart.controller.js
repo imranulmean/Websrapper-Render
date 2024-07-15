@@ -68,12 +68,15 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
             
             product.productTitle=product.productTitle.replace(" |",'');
             let matched= calculateMatchingPercentage(pTitle, product.productTitle);
-            // console.log("pTitle: ", pTitle)
-            // console.log("matched: ", matched)
-            // console.log("product: ", product.productTitle)
-            if(matched>76 && product){
+            console.log("pTitle: ", pTitle)
+            console.log("matched: ", matched)
+            console.log("product: ", product.productTitle)
+            console.log("productPrice: ", product.productPrice)
+            console.log("shop: ", product.shop)
+            console.log("-----------------------")
+            if(matched>=75 && product){
                 filteredProducts.push(product)
-            }            
+            }
         }
         return { 
           products:filteredProducts,
@@ -159,13 +162,15 @@ export const cartCalculation = async(req, res, next) =>{
             getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection2, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection2, productPrice),
             getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection2, productPrice)
-        ]);       
+        ]);
         combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
                                                     colesProducts2.products, woolsProducts2.products, igaProducts2.products);
         productGroups.push(combinedProducts.map(product => (product)));
     }
     // Create combinations
     const finalProducts = generateCombinations(productGroups);
+    console.log("----------------------------------- Generating Combinations -----------------------------------")
+    console.log(finalProducts)
     // Calculate total price for each combination and include it in the response
     let combinationsWithTotal = finalProducts.map(combination => {
       const totalPrice = combination.reduce((acc, product) => acc + product.productPrice, 0);
