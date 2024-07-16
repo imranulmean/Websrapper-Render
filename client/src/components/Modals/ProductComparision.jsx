@@ -11,6 +11,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
     const location = useLocation();
     const { addItemToCart } = useCart();
     const initialRender = useRef(true);
+    const [similarProducts_DiffShop, setSimilarProducts_DiffShop]= useState([]);
     const [comparisonProducts, setComparisonProducts]=useState([]);
     const [weightsProducts, setWeightsProducts]=useState([]);
     const [brandWeightProducts, setBrandWeightProducts]=useState([]);
@@ -23,9 +24,24 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
             initialRender.current = false;            
         } else if (showModal) {
             console.log(post)
+            getSimilarProducts_DiffShop();
             comparisonApi();
         }
     }, [showModal]);
+
+    const getSimilarProducts_DiffShop= async() =>{
+        console.log("calling similar products diff shop")
+        const res= await fetch('/api/products/getSimilarProducts_DiffShop',{
+            method:"POST",
+            headers:{
+                "content-type":"application/json"
+            },
+            body:JSON.stringify(post)            
+        })
+        const data= await res.json();
+        console.log(data.products);
+        setSimilarProducts_DiffShop(data.products)
+    }
 
     const comparisonApi = async () =>{
         const urlParams = new URLSearchParams(location.search);
@@ -103,7 +119,18 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                     </Table>                                
                 </div>
                 {/* Comparision Products Right */}
-               
+                <div className="flex flex-col col-span-3">
+                    Similar Products from Other Shops
+                    <div className="flex overflow-x-auto">
+                        {
+                            similarProducts_DiffShop.map((product)=>
+                                <div className="min-w-[190px] snap-center">
+                                    <ProductCard product={product} addToCart={addToCart} />
+                                </div>
+                            )
+                        }
+                    </div>
+                </div>
                 <div className='col-span-3 h-[650px] overflow-y-auto'>
                      {/* /////////////////// */}
                      {

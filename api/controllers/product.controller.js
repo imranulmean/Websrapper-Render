@@ -113,7 +113,7 @@ function calculateMatchingPercentage(searchTerm, text) {
           matchingWords++;
       }
   });          
-  return (matchingWords / searchTermWords.length) * 100;
+  return (matchingWords / textWords.length) * 100;
 }
 
 async function getProductType_Weights_Brand_productPrice(req){
@@ -159,15 +159,6 @@ async function getComparisonProducts_with_Type_Weights_Engine(req, collectionNam
       combinedPattern =`^${brandName}.*${weight}`;
     }
     const combinedRegex = new RegExp(combinedPattern, 'i');
-    // console.log("searchTerm: ",searchTerm)
-    // console.log("searchTermFromUrl: ",searchTermFromUrl)
-    // console.log("brandName: ",brandName)
-    // console.log("productPrice: ",productPrice)
-    // console.log("predictedCategoriesRegex: ",predictedCategoriesRegex)
-    // console.log("productType: ",productType)
-    // console.log("weight: ",weight)
-    // console.log("combinedPattern: ",combinedPattern)
-    //  console.log("combinedRegex: ",combinedRegex)
 
       let query = {};
 
@@ -223,7 +214,117 @@ export const getComparisonProducts_with_Type_Weights = async (req, res, next) =>
   }
 }
 
+async function getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle){
+  let brandName=pTitle.split(' ')[0];
+  brandName=brandName.split("-")[0];
+  if(predictedCategories.length===0){
+      predictedCategories=await getPredictedCategories();
+  }
+  const  predictedCategoriesRegex= new RegExp(predictedCategories.join('|'), 'gi');
+  const matchCategories = pTitle.match(predictedCategoriesRegex);
+  var productType = matchCategories ? matchCategories : null;
+  var weightMatch = pTitle.match(/(\d+(\.\d+)?(kg|L|gm|g|ml))/i);
+  var weight = weightMatch ? weightMatch[1] : null;
+  // Extract the pack size if it exists after the weight and can be either "pack" or "packs"
+  var packSizeMatch = weightMatch && pTitle.substring(weightMatch.index + weightMatch[0].length).match(/(\d+\s*packs?)/i);
+  var packSize = packSizeMatch ? packSizeMatch[1] : null;
+  return { productType, weight, brandName, packSize };
+}
 
+async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice){  
+  try {   
+    const {productType, weight , brandName, packSize} = await getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);        
+    let combinedPattern = '';
+    if (productType && productType.length > 0 && weight && packSize) {
+          combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}.*${packSize}`).join('|');
+       
+      }
+
+    else if (productType && productType.length > 0 && weight) {
+        combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
+      
+    }
+    else if(!productType || productType==null ){
+      
+      combinedPattern =`^${brandName}.*${weight}`;
+      
+    }
+    else if(!weight || weight==null){
+      combinedPattern =pTitle;
+    }
+    const combinedRegex = new RegExp(combinedPattern, 'i');      
+      let query = {};
+      if (combinedPattern) {
+          query.productTitle = { $regex: combinedRegex };             
+          // query.productPrice={$lte:Number(pPrice)}
+      }
+      // let products = await collectionName.find(query).select('productTitle productPrice productImage shop');
+      let products = await collectionName.aggregate([
+        { $match: query },
+        { 
+            $group: {
+                _id: "$productTitle",
+                productTitle: { $first: "$productTitle" },
+                productPrice: { $first: "$productPrice" },
+                productImage: { $first: "$productImage" },
+                shop: { $first: "$shop" }
+            }
+        }
+      ]);
+      let filteredProducts=[];
+      for (let product of products){
+          
+          product.productTitle=product.productTitle.replace(" |",'');
+          let matched= calculateMatchingPercentage(pTitle, product.productTitle);
+          // console.log("pTitle: ", pTitle)
+          // console.log("matched: ", matched)
+          // console.log("product: ", product.productTitle)
+          // console.log("productPrice: ", product.productPrice)
+          // console.log("shop: ", product.shop)
+          // console.log("-----------------------")
+          if(matched>=75 && product){
+              filteredProducts.push(product)
+          }
+      }
+      return { 
+        products:filteredProducts,
+      };
+  } catch (error) {
+    throw error;
+  }
+
+} 
+
+export const getSimilarProducts_DiffShop =async (req, res, next) =>{
+    try {
+        let combinedProducts;
+        let {productTitle, productPrice}=req.body;
+        productTitle=productTitle.replace(" |",'');     
+        // const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
+        // const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
+        // const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
+        // combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
+        const [ausiProducts, colesProducts, woolsProducts, igaProducts,
+                colesProducts2, woolsProducts2, igaProducts2] = await Promise.all([
+                  getSimilarProducts_DiffShop_Engine(productTitle, AusiCollection, productPrice),
+                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection, productPrice),
+                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection, productPrice),
+                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection, productPrice),
+                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection2, productPrice),
+                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection2, productPrice),
+                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection2, productPrice)
+        ]);
+        combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
+                                                    colesProducts2.products, woolsProducts2.products, igaProducts2.products);      
+      res.status(200).json({
+        products:combinedProducts
+      })
+    } 
+    catch (error) {
+      console.log(error)
+      next(error)
+    }
+}
 // [
 //   {
 //     $group: {
