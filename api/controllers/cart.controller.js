@@ -68,12 +68,12 @@ async function getProductType_Weights_Brand_productPrice(pTitle){
             
             product.productTitle=product.productTitle.replace(" |",'');
             let matched= calculateMatchingPercentage(pTitle, product.productTitle);
-            console.log("pTitle: ", pTitle)
-            console.log("matched: ", matched)
-            console.log("product: ", product.productTitle)
-            console.log("productPrice: ", product.productPrice)
-            console.log("shop: ", product.shop)
-            console.log("-----------------------")
+            // console.log("pTitle: ", pTitle)
+            // console.log("matched: ", matched)
+            // console.log("product: ", product.productTitle)
+            // console.log("productPrice: ", product.productPrice)
+            // console.log("shop: ", product.shop)
+            // console.log("-----------------------")
             if(matched>=75 && product){
                 filteredProducts.push(product)
             }
@@ -169,8 +169,6 @@ export const cartCalculation = async(req, res, next) =>{
     }
     // Create combinations
     const finalProducts = generateCombinations(productGroups);
-    console.log("----------------------------------- Generating Combinations -----------------------------------")
-    console.log(finalProducts)
     // Calculate total price for each combination and include it in the response
     let combinationsWithTotal = finalProducts.map(combination => {
       const totalPrice = combination.reduce((acc, product) => acc + product.productPrice, 0);
