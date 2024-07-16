@@ -113,7 +113,7 @@ function calculateMatchingPercentage(searchTerm, text) {
           matchingWords++;
       }
   });          
-  return (matchingWords / textWords.length) * 100;
+  return (matchingWords / searchTermWords.length) * 100;
 }
 
 async function getProductType_Weights_Brand_productPrice(req){
@@ -231,7 +231,7 @@ async function getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPric
   return { productType, weight, brandName, packSize };
 }
 
-async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice){  
+async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice, shop){  
   try {   
     const {productType, weight , brandName, packSize} = await getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);        
     let combinedPattern = '';
@@ -255,7 +255,8 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice)
     const combinedRegex = new RegExp(combinedPattern, 'i');      
       let query = {};
       if (combinedPattern) {
-          query.productTitle = { $regex: combinedRegex };             
+          query.productTitle = { $regex: combinedRegex };
+          query.shop={$ne:shop}         
           // query.productPrice={$lte:Number(pPrice)}
       }
       // let products = await collectionName.find(query).select('productTitle productPrice productImage shop');
@@ -298,7 +299,7 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice)
 export const getSimilarProducts_DiffShop =async (req, res, next) =>{
     try {
         let combinedProducts;
-        let {productTitle, productPrice}=req.body;
+        let {productTitle, productPrice, shop}=req.body;
         productTitle=productTitle.replace(" |",'');     
         // const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
         // const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
@@ -306,13 +307,13 @@ export const getSimilarProducts_DiffShop =async (req, res, next) =>{
         // combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
         const [ausiProducts, colesProducts, woolsProducts, igaProducts,
                 colesProducts2, woolsProducts2, igaProducts2] = await Promise.all([
-                  getSimilarProducts_DiffShop_Engine(productTitle, AusiCollection, productPrice),
-                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection, productPrice),
-                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection, productPrice),
-                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection, productPrice),
-                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection2, productPrice),
-                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection2, productPrice),
-                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection2, productPrice)
+                  getSimilarProducts_DiffShop_Engine(productTitle, AusiCollection, productPrice, shop),
+                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection, productPrice, shop),
+                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection, productPrice, shop),
+                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection, productPrice, shop),
+                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection2, productPrice, shop),
+                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection2, productPrice, shop),
+                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection2, productPrice, shop)
         ]);
         combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
                                                     colesProducts2.products, woolsProducts2.products, igaProducts2.products);      
