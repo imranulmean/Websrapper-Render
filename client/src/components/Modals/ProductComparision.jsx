@@ -25,7 +25,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
         } else if (showModal) {
             console.log(post)
             getSimilarProducts_DiffShop();
-            comparisonApi();
+            // comparisonApi();
         }
     }, [showModal]);
 
@@ -131,77 +131,78 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                         }
                     </div>
                 </div>
-                <div className='col-span-3 h-[650px] overflow-y-auto'>
-                     {/* /////////////////// */}
-                     {
-                        loading && 
-                        <div className='flex justify-center items-center'>
-                            <Spinner size='xl' />
-                        </div>                        
-                      }                     
-                    <div className='flex flex-row'>
-                        <div>
-                            <Table hoverable>
-                                <Table.Head>
-                                    <Table.HeadCell>Same Brand Same Category</Table.HeadCell>
-                                </Table.Head>
-                                <Table.Body className="divide-y">
-                                    {
-                                        comparisonProducts.length<1 &&
-                                        <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
-                                    }
-                                    {
-                                        comparisonProducts.map((product) =>
-                                        <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                            <ProductCard product={product} addToCart={addToCart}/>
-                                        </Table.Row>                                                                        
-                                        )
-                                    }
-                                </Table.Body>
-                            </Table>
-                        </div>
-                        <div>
-                            <Table hoverable>
-                                <Table.Head>
-                                    <Table.HeadCell>Same Category Same Weight:</Table.HeadCell>
-                                </Table.Head>
-                                <Table.Body className="divide-y">
-                                    {
-                                        weightsProducts.length<1 &&
-                                        <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
-                                    }
-                                    {
-                                        weightsProducts.map((product) =>
+                {/* /////////// Other Criteria Starts///////// */}
+                    <div className='col-span-3 h-[650px] overflow-y-auto'>
+                        {
+                            loading && 
+                            <div className='flex justify-center items-center'>
+                                <Spinner size='xl' />
+                            </div>                        
+                        }                     
+                        <div className='flex flex-row'>
+                            <div>
+                                <Table hoverable>
+                                    <Table.Head>
+                                        <Table.HeadCell>Same Brand Same Category</Table.HeadCell>
+                                    </Table.Head>
+                                    <Table.Body className="divide-y">
+                                        {
+                                            comparisonProducts.length<1 &&
+                                            <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
+                                        }
+                                        {
+                                            comparisonProducts.map((product) =>
                                             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                                                 <ProductCard product={product} addToCart={addToCart}/>
-                                            </Table.Row>                                                                 
-                                        )
-                                    }
-                                </Table.Body>
-                            </Table>
+                                            </Table.Row>                                                                        
+                                            )
+                                        }
+                                    </Table.Body>
+                                </Table>
+                            </div>
+                            <div>
+                                <Table hoverable>
+                                    <Table.Head>
+                                        <Table.HeadCell>Same Category Same Weight:</Table.HeadCell>
+                                    </Table.Head>
+                                    <Table.Body className="divide-y">
+                                        {
+                                            weightsProducts.length<1 &&
+                                            <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
+                                        }
+                                        {
+                                            weightsProducts.map((product) =>
+                                                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                                    <ProductCard product={product} addToCart={addToCart}/>
+                                                </Table.Row>                                                                 
+                                            )
+                                        }
+                                    </Table.Body>
+                                </Table>
+                            </div>
+                            <div>
+                                <Table hoverable>
+                                    <Table.Head>
+                                        <Table.HeadCell>Same Brand Same Weight:</Table.HeadCell>
+                                    </Table.Head>
+                                    <Table.Body className="divide-y">
+                                        {
+                                            brandWeightProducts.length<1 &&
+                                            <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
+                                        }
+                                        {
+                                            brandWeightProducts.map((product) =>
+                                                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                                                    <ProductCard product={product} addToCart={addToCart}/>
+                                                </Table.Row>                                                                 
+                                            )
+                                        }
+                                    </Table.Body>
+                                </Table>
+                            </div>                        
                         </div>
-                        <div>
-                            <Table hoverable>
-                                <Table.Head>
-                                    <Table.HeadCell>Same Brand Same Weight:</Table.HeadCell>
-                                </Table.Head>
-                                <Table.Body className="divide-y">
-                                    {
-                                        brandWeightProducts.length<1 &&
-                                        <p className='text-md font-semibold tracking-tight text-zinc-950 dark:text-white'>No Compared Products Less than The Selected Price</p>
-                                    }
-                                    {
-                                        brandWeightProducts.map((product) =>
-                                            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                                                <ProductCard product={product} addToCart={addToCart}/>
-                                            </Table.Row>                                                                 
-                                        )
-                                    }
-                                </Table.Body>
-                            </Table>
-                        </div>                        
                     </div>
-                </div>
+                {/* /////////// Other Criteria Ends///////// */}
           </div>
         </Modal.Body>
       </Modal>

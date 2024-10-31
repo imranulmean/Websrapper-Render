@@ -231,9 +231,10 @@ async function getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPric
   return { productType, weight, brandName, packSize };
 }
 
-async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice, shop){  
+////////////////// This is currently Working //////////
+async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice, shop){
   try {   
-    const {productType, weight , brandName, packSize} = await getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);        
+    const {productType, weight , brandName, packSize} = await getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);
     let combinedPattern = '';
     if (productType && productType.length > 0 && weight && packSize) {
           combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}.*${packSize}`).join('|');
@@ -277,12 +278,6 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
           
           product.productTitle=product.productTitle.replace(" |",'');
           let matched= calculateMatchingPercentage(pTitle, product.productTitle);
-          // console.log("pTitle: ", pTitle)
-          // console.log("matched: ", matched)
-          // console.log("product: ", product.productTitle)
-          // console.log("productPrice: ", product.productPrice)
-          // console.log("shop: ", product.shop)
-          // console.log("-----------------------")
           if(matched>=75 && product){
               filteredProducts.push(product)
           }
@@ -296,6 +291,9 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
 
 } 
 
+///////////////////////////////////////////////////
+
+///////////////////////// This is Currently Working ////////////////
 export const getSimilarProducts_DiffShop =async (req, res, next) =>{
     try {
         let combinedProducts;
@@ -326,6 +324,10 @@ export const getSimilarProducts_DiffShop =async (req, res, next) =>{
       next(error)
     }
 }
+
+
+
+////////////////////////////////////////////////////////
 // [
 //   {
 //     $group: {
