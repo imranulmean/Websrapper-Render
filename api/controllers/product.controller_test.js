@@ -45,7 +45,7 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
     const {productType, weight , brandName, packSize} = await getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);
     let query = {};
     query.productTitle = { $regex: weight, $options: "i" };
-    query.brandName=brandName;
+    query.brandName = {$regex:brandName, $options:"i" } ;
     query.shop={$ne:shop};
 
     let products = await collectionName.find(query);
