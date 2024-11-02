@@ -130,9 +130,9 @@ export default function Search() {
               <option value='IGA'>IGA</option>
             </Select>
           </div>          
-          <Button type='submit' color="dark">
+          <button type='submit' class="view-all-button product-card-button">
             Apply Filters
-          </Button>
+          </button>
           {/* <Button size="xs" color="dark" onClick={findSimilarProducts}>FindSimilarProducts</Button> */}
         </form>        
       </div>

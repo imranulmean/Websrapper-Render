@@ -2,8 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+
+*{
+  font-family: "Rubik", sans-serif;
+  /* font-family: "Poppins", sans-serif; */
+}
+
 body {
   height: 100vh;
+  box-sizing: border-box;
+  padding: 0;
+  margin:0
+}
+
+.image-banner{
+  background: url('https://domf5oio6qrcr.cloudfront.net/medialibrary/9935/dairy-products.jpg');
+  padding:200px;
+  background-size: cover !important;
+  background-repeat: no-repeat;
+  background-position: center;
+
+}
+
+.flex-center{
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.view-all-button{
+  background: #0075BD;
+  padding: 10px 20px;
+  color: #fff;
+  font-weight: 400;
+  width: max-content;
+}
+
+.product-card{
+  /* box-shadow: #0075BD 1px 1px 1px 1px; */
+  display:flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.product-card-button{
+  font-size: 12px;
+  padding: 6px 4px;
+  width: 100%;
+  display:block;
+}
+
+
+.black-center{
+  color:#000;
+  text-align: center;
+}
+
+.product-title{
+  text-align: center;
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .ql-editor {

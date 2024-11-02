@@ -101,19 +101,18 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                         </Table.Head>
                         <Table.Body className="divide-y">
                             <div>
-                                <div class="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                                <div class="w-[170px] max-w-sm bg-white md:w-[200px] product-card">
                                     <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
                                     <div class="px-2 pb-2">
-                                        <h5 class="text-md font-semibold tracking-tight text-gray-900 dark:text-white">{post.productTitle}</h5>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-sm font-medium text-gray-600 dark:text-white">{post.shop}</span>
-                                        </div>
-                                        <div class="flex items-center justify-between">
-                                            <span class="text-md font-bold text-gray-900 dark:text-white">${post.productPrice}</span>
-                                        </div>                            
-                                    </div>                        
+                                        <h5 class="product-title">{post.productTitle}</h5>
+                                        <div class="flex-center py-2 gap-2">
+                                            <span class="product-title">{post.shop}</span>
+                                            <span class="product-title">${post.productPrice}</span>
+                                        </div>                         
+                                    </div>
+                                    <button class="view-all-button product-card-button" onClick={()=>addToCart(post)}>Add To Cart</button>
                                 </div>
-                                <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
+                                
                             </div> 
                         </Table.Body>
                     </Table>                                

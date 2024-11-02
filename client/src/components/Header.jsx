@@ -57,9 +57,9 @@ export default function Header() {
   };
 
   return (
-    <Navbar className='sticky top-0 bg-white z-30 p-3'>
+    <Navbar className='sticky top-0 bg-[#0075BD] z-30 p-3' style={{"background":'linear-gradient(45deg, #0075BD 50%, white 50%)'}}>
       <Link to='/' className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white'>
-        <h3 className='text-xl text-black'>Ausi Store</h3>
+        <h3 className='text-xl text-white'>Ausi Store</h3>
       </Link>
       <form onSubmit={handleSubmit} className='relative'>
         {/* <TextInput type='text' placeholder='Search...'           

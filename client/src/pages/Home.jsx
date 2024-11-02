@@ -42,8 +42,8 @@ export default function Home() {
       <div className='max-w-6xl mx-auto p-3 flex flex-col gap-8 py-7'>
         {colesProducts && colesProducts.length > 0 && (
           <div className='flex flex-col gap-6'>
-            <h2 className='text-2xl font-semibold text-center'>Featured Coles Products</h2>
-            <div className='flex flex-wrap gap-4'>
+            <h2 className='text-2xl font-semibold black-center'>Featured Coles Products</h2>
+            <div className='flex-center flex-wrap gap-3'>
               {colesProducts.map((product) => (
                 <PostCard key={product._id} post={product} />
               ))}
@@ -52,8 +52,8 @@ export default function Home() {
         )}
         {woolsProducts && woolsProducts.length > 0 && (
           <div className='flex flex-col gap-6'>
-            <h2 className='text-2xl font-semibold text-center'>Featured Wools Products</h2>
-            <div className='flex flex-wrap gap-4'>
+            <h2 className='text-2xl font-semibold black-center'>Featured Wools Products</h2>
+            <div className='flex-center flex-wrap gap-3'>
               {woolsProducts.map((product) => (
                 <PostCard key={product._id} post={product} />
               ))}
@@ -62,8 +62,8 @@ export default function Home() {
         )}
         {igaProducts && igaProducts.length > 0 && (
           <div className='flex flex-col gap-6'>
-            <h2 className='text-2xl font-semibold text-center'>Featured IGA Products</h2>
-            <div className='flex flex-wrap gap-4'>
+            <h2 className='text-2xl font-semibold black-center'>Featured IGA Products</h2>
+            <div className='flex-center flex-wrap gap-3'>
               {igaProducts.map((product) => (
                 <PostCard key={product._id} post={product} />
               ))}

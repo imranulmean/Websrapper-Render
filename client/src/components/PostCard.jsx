@@ -14,25 +14,20 @@ export default function PostCard({ post }) {
         alert("Added to cart")
     };
     return (
-        <div class="w-[170px] max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 md:w-[200px]">
-            {/* <Link to={`/post/${post.productUrl}`}> */}
-                <img class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
-            {/* </Link> */}
-            <div class="px-2 pb-2">
-                {/* <Link to="/"> */}
-                    <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white">{post.productTitle}</h5>
-                {/* </Link> */}
-                <div class="flex items-center justify-between">
-                    <span class="text-sm font-medium text-gray-600 dark:text-white">{post.shop}</span>
+        <div class="w-[170px] max-w-sm bg-white md:w-[200px] product-card">
+            <div>
+                <img src={post.productImage} alt="product image" />                
+            </div>
+            <div class="px-2 pb-2 w-full">
+                <h5 class="product-title">{post.productTitle}</h5>
+                <div class="flex-center py-2 gap-2">
+                    <span class="product-title">{post.shop}</span>
+                    <span class="product-title">${post.productPrice}</span>
                 </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-lg font-bold text-gray-900 dark:text-white">${post.productPrice}</span>
+                <div className='flex-center gap-2'>
+                    <button class="view-all-button product-card-button"  onClick={()=>addToCart(post)}>Add To Cart</button>
+                    <button class="view-all-button product-card-button" onClick={()=>setShowModal(true)}>Compare</button>
                 </div>
-                <div className='flex flex-col gap-2'>
-                    <Button size="xs" color="dark" onClick={()=>addToCart(post)}>Add To Cart</Button>
-                    <Button size="xs" color="dark" onClick={()=>setShowModal(true)}>Compare</Button>
-                </div>
-
             </div>
             <ProductComparisionModal post={post} showModal={showModal} setShowModal={setShowModal}/>
         </div>    
