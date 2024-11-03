@@ -9,6 +9,10 @@ export default function ProductCard({product, addToCart}){
                 <div class="flex-center py-2 gap-2">
                     <span class="product-title">{product.shop}</span>
                     <span class="product-title">${product.productPrice}</span>
+                    {
+                        product.matched && 
+                            <span class="product-title">{product.matched}</span>
+                    }
                 </div>
                 
                 <button class="view-all-button product-card-button" onClick={()=>addToCart(product)}>Add To Cart</button>

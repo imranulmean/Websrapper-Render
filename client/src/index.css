@@ -68,6 +68,10 @@ body {
   font-weight: 500;
 }
 
+.divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: #0075BD !important;
+}
+
 .ql-editor {
   font-size: 1.05rem;
 }
