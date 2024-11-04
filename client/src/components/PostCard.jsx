@@ -22,13 +22,12 @@ export default function PostCard({ post, cartPage }) {
                 <h5 class="product-title">{post.productTitle}</h5>
                 <div class="flex-center py-2 gap-2">
                     <span class="product-title">{post.shop}</span>
-                    <span class="product-title">${post.productPrice}</span>
-                    {
-                        post.matched && 
-                            <span class="product-title">{post.matched}</span>
-                    }
-                    
+                    <span class="product-title">${post.productPrice}</span>                    
                 </div>
+                {
+                    post.matched && 
+                    <p class="product-title" style={{"color":"#0075BD", "font-weight":"600"}}>String Matched:{post.matched}%</p>
+                }                
                 {
                     !cartPage &&
                     <div className='flex-center gap-2'>

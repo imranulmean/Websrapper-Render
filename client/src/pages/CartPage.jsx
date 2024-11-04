@@ -14,19 +14,20 @@ export default function CartPage(){
     useEffect(()=>{
         if(cartItemsContext.length>0){
             setCartItems(cartItemsContext);
+            getSimilarProducts_DiffShop();
             // cartCalculation();
         }        
     },[cartItemsContext])
 
     useEffect(() => {
         if (cartItems.length > 0) {
-            getSimilarProducts_DiffShop();
+            
         }
-      }, [cartItems]);
+      }, []);
 
       const getSimilarProducts_DiffShop = async () => {
         const updatedItems = await Promise.all(
-          cartItems.map(async (item) => {
+            cartItemsContext.map(async (item) => {
               const res = await fetch('/api/products/getSimilarProducts_DiffShop', {
                 method: "POST",
                 headers: {
@@ -38,56 +39,61 @@ export default function CartPage(){
               return { ...item, similar_prods: data.products };
           })
         );
-        setCartItems(updatedItems); 
+         setCartItems(updatedItems); 
       };
 
-    const cartCalculation =async() =>{
-        if(cartItemsContext.length>0){
-            setCartCalculationItems(null);
-            setLoading(true);
-            console.log("Start Calculating");
-            const res= await fetch('/api/cart/cartCalculation',{
-                method:"POST",
-                headers:{
-                    "content-type":"application/json"
-                },
-                body:JSON.stringify(cartItemsContext)            
-            })
-            const data= await res.json();
-            console.log(data.products)
-            setCartCalculationItems(data.products)
-            setLoading(false);
-        }
+    // const cartCalculation =async() =>{
+    //     if(cartItemsContext.length>0){
+    //         setCartCalculationItems(null);
+    //         setLoading(true);
+    //         console.log("Start Calculating");
+    //         const res= await fetch('/api/cart/cartCalculation',{
+    //             method:"POST",
+    //             headers:{
+    //                 "content-type":"application/json"
+    //             },
+    //             body:JSON.stringify(cartItemsContext)            
+    //         })
+    //         const data= await res.json();
+    //         console.log(data.products)
+    //         setCartCalculationItems(data.products)
+    //         setLoading(false);
+    //     }
 
-    }
+    // }
 
     return(
-        <div className="flex">
+        <div className="flex" style={{"margin-top":"20px"}}>
             {
                 cartItems && cartItems.length===0 &&
                 <div>Empty Cart</div>
             }
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-2">
                 {                    
                     cartItems && cartItems.length>0 &&                
-                        cartItems.map((c)=>{
+                    cartItems.map((c)=>{
                             return(
-                                <div class="flex gap-2">
+                                <div class="flex gap-2 w-full p-4" style={{"border-bottom":"1px solid #0075BD"}}>
                                     <div>
                                         <PostCard post={c} cartPage={true}/>
                                     </div> 
-                                    <div className="flex-center overflow-x-auto w-[400px] md:w-[800px] gap-2">
-                                        {
-                                            c.similar_prods && c.similar_prods.length>0 &&
-                                            c.similar_prods.map((sp)=>{
-                                                return(
-                                                        <PostCard post={sp} cartPage={true}/>                                                    
-                                                )
-                                            })
-                                                
-                                        }
-                                    </div>
+                                    <div className="flex flex-col gap-2 overflow-x-auto w-[200px] md:w-[900px]" style={{"border-radius":"5px", "box-shadow":"0 0 2px 0px"}}>
+                                        <div>
+                                            <h1 className="text-center">Best Possible Matched Generated</h1>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            {
+                                                c.similar_prods && c.similar_prods.length>0 &&
+                                                c.similar_prods.map((sp)=>{
+                                                    return(
+                                                            <PostCard post={sp} cartPage={true}/>                                                    
+                                                    )
+                                                })
+                                                    
+                                            }
+                                        </div>
 
+                                    </div>
                                 </div>    
                             )
                         })                
