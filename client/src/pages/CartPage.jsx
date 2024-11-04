@@ -63,7 +63,7 @@ export default function CartPage(){
     // }
 
     return(
-        <div className="flex" style={{"margin-top":"20px"}}>
+        <div className="flex-center" style={{"margin-top":"20px"}}>
             {
                 cartItems && cartItems.length===0 &&
                 <div>Empty Cart</div>
@@ -74,14 +74,14 @@ export default function CartPage(){
                     cartItems.map((c)=>{
                             return(
                                 <div class="flex gap-2 w-full p-4" style={{"border-bottom":"1px solid #0075BD"}}>
-                                    <div>
+                                    <div class="flex-center">
                                         <PostCard post={c} cartPage={true}/>
                                     </div> 
-                                    <div className="flex flex-col gap-2 overflow-x-auto w-[200px] md:w-[900px]" style={{"border-radius":"5px", "box-shadow":"0 0 2px 0px"}}>
+                                    <div className="flex flex-col gap-2" style={{"border-radius":"5px", "box-shadow":"0 0 2px 0px"}}>
                                         <div>
                                             <h1 className="text-center">Best Possible Matched Generated</h1>
                                         </div>
-                                        <div className="flex gap-2">
+                                        <div className="flex flex-col gap-2 h-[250px] overflow-y-auto">
                                             {
                                                 c.similar_prods && c.similar_prods.length>0 &&
                                                 c.similar_prods.map((sp)=>{

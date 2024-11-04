@@ -20,7 +20,7 @@ export default function PostCard({ post, cartPage }) {
             </div>
             <div class="px-2 pb-2 w-full" style={{'border': '1px solid #0075BD', 'box-shadow':' 0 0 1px 0px'}}>
                 <h5 class="product-title">{post.productTitle}</h5>
-                <div class="flex-center py-2 gap-2">
+                <div class="flex-center gap-2">
                     <span class="product-title">{post.shop}</span>
                     <span class="product-title">${post.productPrice}</span>                    
                 </div>

@@ -48,6 +48,10 @@ body {
   align-items: center;
 }
 
+.product-card img{
+  height:150px;
+  width: 150px;
+}
 .product-card-button{
   font-size: 12px;
   padding: 6px 4px;
