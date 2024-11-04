@@ -3,6 +3,7 @@ import CallToAction from '../components/CallToAction';
 import { useEffect, useState } from 'react';
 import PostCard from '../components/PostCard';
 import Slider from '../components/Slider';
+import ImageMarque from '../components/ImageMarque';
 
 export default function Home() {
   const [colesProducts, setColesProducts] = useState([]);
@@ -38,7 +39,7 @@ export default function Home() {
     <div>
       
       <Slider />
-
+      <ImageMarque />
       <div className='max-w-6xl mx-auto p-3 flex flex-col gap-8 py-7'>
         {colesProducts && colesProducts.length > 0 && (
           <div className='flex flex-col gap-6'>

@@ -72,6 +72,19 @@ body {
   border-color: #0075BD !important;
 }
 
+.image-marque{
+  animation: linear imageSlide infinite 20s;
+}
+
+@keyframes imageSlide {
+  0% {
+    transform: translateX(0);
+  }
+  100%{
+    transform: translateX(100%);
+  }
+}
+
 .ql-editor {
   font-size: 1.05rem;
 }
