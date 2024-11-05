@@ -89,6 +89,19 @@ body {
   }
 }
 
+.text-marque{
+  animation: linear textSlide infinite 4s;
+}
+
+@keyframes textSlide {
+  0% {
+    transform: translateX(0);
+  }
+  100%{
+    transform: translateX(5%);
+  }
+}
+
 .ql-editor {
   font-size: 1.05rem;
 }
