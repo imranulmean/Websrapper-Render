@@ -120,18 +120,18 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                 {/* Comparision Products Right */}
                 <div className="flex flex-col col-span-3">
                     Similar Products from Other Shops
-                    <div className="flex overflow-x-auto">
+                    <div className="flex gap-2 overflow-x-auto">
                         {
                             similarProducts_DiffShop.map((product)=>
-                                <div className="min-w-[190px] snap-center">
-                                    <ProductCard product={product} addToCart={addToCart} />
+                                <div className="flex-center">
+                                    <PostCard post={product} productCompareModal={true} cartPage={true}/>
                                 </div>
                             )
                         }
                     </div>
                 </div>
                 {/* /////////// Other Criteria Starts///////// */}
-                    <div className='col-span-3 h-[650px] overflow-y-auto'>
+                    {/* <div className='col-span-3 h-[650px] overflow-y-auto'>
                         {
                             loading && 
                             <div className='flex justify-center items-center'>
@@ -200,7 +200,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
                                 </Table>
                             </div>                        
                         </div>
-                    </div>
+                    </div> */}
                 {/* /////////// Other Criteria Ends///////// */}
           </div>
         </Modal.Body>

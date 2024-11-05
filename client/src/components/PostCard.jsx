@@ -4,7 +4,7 @@ import ProductComparisionModal from './Modals/ProductComparision';
 import { useCart } from "../context/CartContext";
 import { Button, Spinner } from "flowbite-react";
 
-export default function PostCard({ post, cartPage }) {
+export default function PostCard({ post, cartPage, productCompareModal }) {
 
     const { addItemToCart } = useCart();
     const [showModal,  setShowModal]= useState(false);
@@ -35,7 +35,10 @@ export default function PostCard({ post, cartPage }) {
                         <button class="view-all-button product-card-button" onClick={()=>setShowModal(true)}>Compare</button>
                     </div>                    
                 }
-
+                {
+                    productCompareModal &&
+                    <button class="view-all-button product-card-button"  onClick={()=>addToCart(post)}>Add To Cart</button>
+                }
             </div>
             <ProductComparisionModal post={post} showModal={showModal} setShowModal={setShowModal}/>
         </div>    
