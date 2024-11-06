@@ -231,99 +231,11 @@ async function getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPric
   return { productType, weight, brandName, packSize };
 }
 
-////////////////// This is currently Working //////////
-async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice, shop){
-  try {   
-    const {productType, weight , brandName, packSize} = await getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);
-    let combinedPattern = '';
-    if (productType && productType.length > 0 && weight && packSize) {
-          combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}.*${packSize}`).join('|');
-       
-      }
 
-    else if (productType && productType.length > 0 && weight) {
-        combinedPattern = productType.map(type => `^${brandName}.*${type}.*${weight}`).join('|');
-      
-    }
-    else if(!productType || productType==null ){
-      
-      combinedPattern =`^${brandName}.*${weight}`;
-      
-    }
-    else if(!weight || weight==null){
-      combinedPattern =pTitle;
-    }
-    const combinedRegex = new RegExp(combinedPattern, 'i');      
-      let query = {};
-      if (combinedPattern) {
-          query.productTitle = { $regex: combinedRegex };
-          query.shop={$ne:shop}         
-          // query.productPrice={$lte:Number(pPrice)}
-      }
-      // let products = await collectionName.find(query).select('productTitle productPrice productImage shop');
-      let products = await collectionName.aggregate([
-        { $match: query },
-        { 
-            $group: {
-                _id: "$productTitle",
-                productTitle: { $first: "$productTitle" },
-                productPrice: { $first: "$productPrice" },
-                productImage: { $first: "$productImage" },
-                shop: { $first: "$shop" }
-            }
-        }
-      ]);
-      let filteredProducts=[];
-      for (let product of products){
-          
-          product.productTitle=product.productTitle.replace(" |",'');
-          let matched= calculateMatchingPercentage(pTitle, product.productTitle);
-          if(matched>=75 && product){
-              filteredProducts.push(product)
-          }
-      }
-      return { 
-        products:filteredProducts,
-      };
-  } catch (error) {
-    throw error;
-  }
-
-} 
 
 ///////////////////////////////////////////////////
 
-///////////////////////// This is Currently Working ////////////////
-export const getSimilarProducts_DiffShop =async (req, res, next) =>{
-    try {
-        let combinedProducts;
-        let {productTitle, productPrice, shop}=req.body;
-        productTitle=productTitle.replace(" |",'');     
-        // const {products: colesProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, ColesCollection, productPrice)
-        // const {products: woolsProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, WoolsCollection, productPrice)
-        // const {products: igaProducts}=await getComparisonProducts_with_Type_Weights_Engine(productTitle, IgaCollection, productPrice)
-        // combinedProducts=colesProducts.concat(woolsProducts, igaProducts);
-        const [ausiProducts, colesProducts, woolsProducts, igaProducts,
-                colesProducts2, woolsProducts2, igaProducts2] = await Promise.all([
-                  getSimilarProducts_DiffShop_Engine(productTitle, AusiCollection, productPrice, shop),
-                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection, productPrice, shop),
-                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection, productPrice, shop),
-                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection, productPrice, shop),
-                  getSimilarProducts_DiffShop_Engine(productTitle, ColesCollection2, productPrice, shop),
-                  getSimilarProducts_DiffShop_Engine(productTitle, WoolsCollection2, productPrice, shop),
-                  getSimilarProducts_DiffShop_Engine(productTitle, IgaCollection2, productPrice, shop)
-        ]);
-        combinedProducts = ausiProducts.products.concat(colesProducts.products, woolsProducts.products, igaProducts.products,
-                                                    colesProducts2.products, woolsProducts2.products, igaProducts2.products);      
-      res.status(200).json({
-        products:combinedProducts
-      })
-    } 
-    catch (error) {
-      console.log(error)
-      next(error)
-    }
-}
+
 
 
 

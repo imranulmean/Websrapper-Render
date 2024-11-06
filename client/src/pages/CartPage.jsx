@@ -79,9 +79,16 @@ export default function CartPage(){
                                     </div> 
                                     <div className="flex flex-col gap-2" style={{"border-radius":"5px", "box-shadow":"0 0 2px 0px"}}>
                                         <div>
-                                            <h1 className="text-center">Best Possible Matched Generated</h1>
+                                            <h1 className="product-title w-[200px]">Best Possible Matched Generated</h1>
                                         </div>
                                         <div className="flex flex-col gap-2 h-[250px] overflow-y-auto">
+                                            {
+                                                !c.similar_prods &&
+                                                <div className="m-auto">
+                                                    <Spinner size='xl' />
+                                                </div>
+                                                
+                                            }
                                             {
                                                 c.similar_prods && c.similar_prods.length>0 &&
                                                 c.similar_prods.map((sp)=>{

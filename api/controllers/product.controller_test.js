@@ -54,7 +54,7 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
         product= product.toObject();
         product.productTitle=product.productTitle.replace(" |",'');
         let matched= calculateMatchingPercentage(pTitle, product.productTitle);
-        product.matched=matched;
+        product.matched=matched.toFixed(2);
         if(matched>=50){            
             filteredProducts.push(product)
         }

@@ -8,6 +8,18 @@ export default function PostCard({ post, cartPage, productCompareModal }) {
 
     const { addItemToCart } = useCart();
     const [showModal,  setShowModal]= useState(false);
+    const dummyImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQrPYwxUp3JKC6jOxAZeioI-VF4o_Chj9yF2A&s";
+    const placeholderPattern = /^data:image\/gif;base64/i;
+
+    const handleError = (e) => {
+        e.target.src = dummyImage;
+    };
+
+    const handleLoad = (e) => {
+        if (placeholderPattern.test(e.target.src)) {
+            e.target.src = dummyImage;
+        }
+    };
     
     const addToCart = (item) => {
         addItemToCart(item);
@@ -16,7 +28,8 @@ export default function PostCard({ post, cartPage, productCompareModal }) {
     return (
         <div class="w-[170px] max-w-sm bg-white md:w-[200px] product-card">
             <div>
-                <img src={post.productImage} alt="product image"  loading="lazy"/>
+                <img src={post.productImage} alt="product image"  loading="lazy"
+                onError={handleError} onLoad={handleLoad}/>
             </div>
             <div class="px-2 pb-2 w-full" style={{'border': '1px solid #0075BD', 'box-shadow':' 0 0 1px 0px'}}>
                 <h5 class="product-title">{post.productTitle}</h5>
