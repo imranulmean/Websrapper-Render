@@ -15,10 +15,12 @@ import PostPage from './pages/PostPage';
 import ScrollToTop from './components/ScrollToTop';
 import Search from './pages/Search';
 import CartPage from './pages/CartPage';
+import PromotionModal from './components/Modals/PromotionModal';
 
 export default function App() {
   return (
     <BrowserRouter>
+      <PromotionModal />
       <ScrollToTop />
       <Header />
       <Routes>

@@ -8,6 +8,7 @@ import { signoutSuccess } from '../redux/user/userSlice';
 import { useEffect, useState } from 'react';
 import CartComponent from './CartComponent';
 import { useCart } from '../context/CartContext';
+import ImageMarque from './ImageMarque';
 
 
 export default function Header() {
@@ -57,7 +58,9 @@ export default function Header() {
   };
 
   return (
-    <Navbar className='sticky top-0 bg-[#0075BD] z-30 p-3' style={{"background":'linear-gradient(45deg, #0075BD 50%, white 50%)'}}>
+    <>
+      <ImageMarque textMarque={1}/>
+      <Navbar className='sticky top-0 bg-[#0075BD] z-30 p-3' style={{"background":'linear-gradient(45deg, #0075BD 50%, white 50%)'}}>
       <Link to='/' className='self-center whitespace-nowrap text-sm sm:text-xl font-semibold dark:text-white'>
         <h3 className='text-xl text-white'>Ausi Store</h3>
       </Link>
@@ -141,6 +144,8 @@ export default function Header() {
           <Link to='/projects'>Projects</Link>
         </Navbar.Link>
       </Navbar.Collapse> */}
-    </Navbar>
+    </Navbar>      
+    </>
+
   );
 }
