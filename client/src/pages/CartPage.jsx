@@ -26,6 +26,7 @@ export default function CartPage(){
       }, []);
 
       const getSimilarProducts_DiffShop = async () => {
+        setLoading(true);
         const updatedItems = await Promise.all(
             cartItemsContext.map(async (item) => {
               const res = await fetch('/api/products/getSimilarProducts_DiffShop', {
@@ -40,6 +41,7 @@ export default function CartPage(){
           })
         );
          setCartItems(updatedItems); 
+         setLoading(false);
       };
 
     // const cartCalculation =async() =>{
@@ -74,16 +76,20 @@ export default function CartPage(){
                     cartItems.map((c)=>{
                             return(
                                 <div class="flex gap-2 w-full p-4" style={{"border-bottom":"1px solid #0075BD"}}>
+                                    
+                                    {/* //////// Main Product Left///// */}
                                     <div class="flex-center">
                                         <PostCard post={c} cartPage={true}/>
                                     </div> 
+
+                                    {/* /// Comparison Products Right ///// */}
                                     <div className="flex flex-col gap-2" style={{"border-radius":"5px", "box-shadow":"0 0 2px 0px"}}>
                                         <div>
                                             <h1 className="product-title w-[200px]" style={{"background":"#0075BD", "color":"#fff"}}>Best Possible Matched Generated</h1>
                                         </div>
-                                        <div className="flex flex-col gap-2 h-[250px] overflow-y-auto">
+                                        <div className="flex flex-col gap-2 h-[250px] overflow-y-auto" style={{'align-items':'center'}}>
                                             {
-                                                !c.similar_prods &&
+                                                loading &&
                                                 <div className="m-auto">
                                                     <Spinner size='xl' />
                                                 </div>

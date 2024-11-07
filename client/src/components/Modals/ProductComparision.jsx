@@ -30,7 +30,7 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
     }, [showModal]);
 
     const getSimilarProducts_DiffShop= async() =>{
-        console.log("calling similar products diff shop")
+        setLoading(true);
         const res= await fetch('/api/products/getSimilarProducts_DiffShop',{
             method:"POST",
             headers:{
@@ -39,8 +39,8 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
             body:JSON.stringify(post)            
         })
         const data= await res.json();
-        console.log(data.products);
         setSimilarProducts_DiffShop(data.products)
+        setLoading(false);
     }
 
     const comparisonApi = async () =>{
@@ -92,35 +92,23 @@ export default function ProductComparisionModal({ post, showModal,  setShowModal
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size='8xl'>
       <Modal.Header></Modal.Header>
         <Modal.Body className="p-1">
-          <div className='grid grid-cols-3 gap-1 md:grid-cols-4 '>                
+          <div className='flex gap-2 justify-center'>                
                 {/* Main Product Left*/}
-                <div className='hidden md:col-span-1 md:inline-grid '>
-                    <Table hoverable>
-                        <Table.Head>
-                            <Table.HeadCell>Selected Product</Table.HeadCell>
-                        </Table.Head>
-                        <Table.Body className="divide-y">
-                            <div>
-                                <div class="w-[170px] max-w-sm bg-white md:w-[200px] product-card">
-                                    <img onClick={()=>setShowModal(true)} class="p-1 rounded-t-lg" src={post.productImage} alt="product image" />
-                                    <div class="px-2 pb-2">
-                                        <h5 class="product-title">{post.productTitle}</h5>
-                                        <div class="flex-center py-2 gap-2">
-                                            <span class="product-title">{post.shop}</span>
-                                            <span class="product-title">${post.productPrice}</span>
-                                        </div>                         
-                                    </div>
-                                    <button class="view-all-button product-card-button" onClick={()=>addToCart(post)}>Add To Cart</button>
-                                </div>
-                                
-                            </div> 
-                        </Table.Body>
-                    </Table>                                
+                <div className='flex flex-col gap-2 justify-center' style={{'alignItems':'center'}}>
+                <h1 className="product-title w-full" style={{"background":"#0075BD", "color":"#fff"}}>Selected Product</h1>
+                    <PostCard post={post} productCompareModal={true} cartPage={true}/>                               
                 </div>
                 {/* Comparision Products Right */}
-                <div className="flex flex-col col-span-3">
-                    Similar Products from Other Shops
-                    <div className="flex gap-2 overflow-x-auto">
+                <div className="flex flex-col" style={{"border-radius":"5px", "box-shadow":"0 0 2px 0px", 'overflow':'hidden'}}>                    
+                    <h1 className="product-title w-full" style={{"background":"#0075BD", "color":"#fff"}}>Similar Products from Other Shops</h1>
+                    {
+                        loading &&
+                        <div className="m-auto">
+                            <Spinner size='xl' />
+                        </div>
+                        
+                    }                    
+                    <div className="flex flex-col h-[250px] overflow-y-auto gap-2 md:flex-row md:w-[800px] md:h-full md:overflow-x-auto">
                         {
                             similarProducts_DiffShop.map((product)=>
                                 <div className="flex-center">
