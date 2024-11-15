@@ -20,7 +20,7 @@ import PromotionModal from './components/Modals/PromotionModal';
 export default function App() {
   return (
     <BrowserRouter>
-      <PromotionModal />
+      {/* <PromotionModal /> */}
       <ScrollToTop />
       <Header />
       <Routes>

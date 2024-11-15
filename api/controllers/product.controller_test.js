@@ -32,9 +32,22 @@ async function getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPric
     var productType = matchCategories ? matchCategories : null;
     var weightMatch = pTitle.match(/(\d+(\.\d+)?(kg|L|gm|g|ml))/i);
     var weight = weightMatch ? weightMatch[1] : null;
-    // Extract the pack size if it exists after the weight and can be either "pack" or "packs"
-    var packSizeMatch = weightMatch && pTitle.substring(weightMatch.index + weightMatch[0].length).match(/(\d+\s*packs?)/i);
-    var packSize = packSizeMatch ? packSizeMatch[1] : null;
+
+    // Initialize packSize
+    let packSize = null;
+
+    // Check for pack size in both possible formats (before and after the weight)
+    const packSizeMatch = pTitle.match(/(\d+)\s*[xX]\s*\d+(\.\d+)?(kg|L|gm|g|ml)|(\d+(\.\d+)?(kg|L|gm|g|ml))\s*[xX]\s*(\d+)/i);
+    if (packSizeMatch) {
+        // If match found, determine which group captures pack size
+        packSize = packSizeMatch[1] || packSizeMatch[7];
+    } else {
+        // Look for "pack", "Pack", or "packs" if "x" is not found
+        const alternatePackSizeMatch = pTitle.match(/(\d+\s*(?:pack|Pack|packs))/i);
+        if (alternatePackSizeMatch) {
+            packSize = alternatePackSizeMatch[1];
+        }
+    }
     return { productType, weight, brandName, packSize };
 }
 
@@ -43,11 +56,37 @@ async function getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPric
 async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice, shop){
     try { 
     const {productType, weight , brandName, packSize} = await getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);
-    let query = {};
-    query.productTitle = { $regex: weight, $options: "i" };
-    query.brandName = {$regex:brandName, $options:"i" } ;
-    query.shop={$ne:shop};
-
+    // console.log("brandName: ",brandName)
+    // console.log("weight: ",weight)
+    // console.log("packSize: ",packSize)
+    let query = { $and:[] };
+    query.$and.push({ brandName: { $regex: brandName, $options: "i" } });
+    query.$and.push({ shop: { $ne: shop } });    
+    // if (weight) {
+    //     query.$and.push({ productTitle: { $regex: weight, $options: "i" } });
+    // }
+    // if (packSize) {
+    //     query.$and.push({ productTitle: { $regex: packSize, $options: "i" } });
+    // }
+   ///////////////////////////////////////
+        // Handle weight and packSize
+        if (packSize) {
+            // If packSize exists, include products that either match both weight and packSize or only packSize
+            let orConditions = [{ productTitle: { $regex: packSize, $options: "i" } }];
+            if (weight) {
+                orConditions.push({
+                    $and: [
+                        { productTitle: { $regex: weight, $options: "i" } },
+                        { productTitle: { $regex: packSize, $options: "i" } }
+                    ]
+                });
+            }
+            query.$and.push({ $or: orConditions });
+        } else if (weight) {
+            // If only weight exists, match it
+            query.$and.push({ productTitle: { $regex: weight, $options: "i" } });
+        }   
+   //////////////////////////////////////
     let products = await collectionName.find(query);
     let filteredProducts=[];
     for(let product of products){
