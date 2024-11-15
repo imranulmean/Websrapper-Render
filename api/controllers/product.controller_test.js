@@ -69,23 +69,31 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
     //     query.$and.push({ productTitle: { $regex: packSize, $options: "i" } });
     // }
    ///////////////////////////////////////
-        // Handle weight and packSize
-        if (packSize) {
-            // If packSize exists, include products that either match both weight and packSize or only packSize
-            let orConditions = [{ productTitle: { $regex: packSize, $options: "i" } }];
-            if (weight) {
-                orConditions.push({
-                    $and: [
-                        { productTitle: { $regex: weight, $options: "i" } },
-                        { productTitle: { $regex: packSize, $options: "i" } }
-                    ]
-                });
-            }
-            query.$and.push({ $or: orConditions });
+        if (packSize && weight) {
+            // Require both weight and packSize in the productTitle OR only packSize
+            query.$and.push({
+                $or: [
+                    {
+                        $and: [
+                            { productTitle: { $regex: `\\b${weight}\\b`, $options: "i" } }, // Strict match for weight
+                            { productTitle: { $regex: `\\b${packSize}\\b`, $options: "i" } } // Strict match for packSize
+                        ]
+                    },
+                    { productTitle: { $regex: `\\b${packSize}\\b`, $options: "i" } } // Strict match for only packSize
+                ]
+            });
+        } else if (packSize) {
+            // If only packSize exists, require it in the productTitle
+            query.$and.push({ productTitle: { $regex: `\\b${packSize}\\b`, $options: "i" } });
         } else if (weight) {
-            // If only weight exists, match it
-            query.$and.push({ productTitle: { $regex: weight, $options: "i" } });
-        }   
+            // If only weight exists, require it in the productTitle
+            query.$and.push({ productTitle: { $regex: `\\b${weight}\\b`, $options: "i" } });
+        }
+
+        // Ensure that irrelevant products with neither weight nor packSize are excluded
+        if (!weight && !packSize) {
+            throw new Error("No valid weight or packSize found for the query.");
+        } 
    //////////////////////////////////////
     let products = await collectionName.find(query);
     let filteredProducts=[];
