@@ -85,9 +85,9 @@ export default function CartPage(){
                                     {/* /// Comparison Products Right ///// */}
                                     <div className="flex flex-col gap-2" style={{"border-radius":"5px", "box-shadow":"0 0 2px 0px"}}>
                                         <div>
-                                            <h1 className="product-title w-[200px]" style={{"background":"#0075BD", "color":"#fff"}}>Best Possible Matched Generated</h1>
+                                            <h1 className="product-title p-1" style={{"background":"#0075BD", "color":"#fff"}}>Best Possible Matched Generated</h1>
                                         </div>
-                                        <div className="flex flex-col gap-2 h-[250px] overflow-y-auto" style={{'align-items':'center'}}>
+                                        <div className="flex flex-col h-[250px] overflow-y-auto gap-2 md:flex-row md:w-[800px] md:h-full md:overflow-x-auto" style={{'align-items':'center'}}>
                                             {
                                                 loading &&
                                                 <div className="m-auto">
