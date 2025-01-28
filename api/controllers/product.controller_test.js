@@ -123,7 +123,7 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
     let query = { $and:[] };
     query.$and.push({ brandName: { $regex: brandName, $options: "i" } });
     query.$and.push({ shop: { $ne: shop } });
-    query.$and.push({ productPrice: { $lt: pPrice } });
+    // query.$and.push({ productPrice: { $lt: pPrice } });
         if (packSize && weight) {
 
             const weightRegex = weight.replace(/ml|l|kg|g|x/gi, match => `[${match.toLowerCase()}${match.toUpperCase()}]`);
@@ -168,7 +168,7 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
         // product.productTitle=product.productTitle.replace(" |",'');
         let matched= compareTitlesAndGetPercentage(normalizedTitle0, normalizedTitle);
         product.matched=matched.toFixed(2);
-        if(matched>=60){            
+        if(matched>=0){            
             filteredProducts.push(product)
         }
     }
