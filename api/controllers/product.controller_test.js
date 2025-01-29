@@ -159,18 +159,42 @@ async function getSimilarProducts_DiffShop_Engine(pTitle,collectionName, pPrice,
     let filteredProducts=[];
 
     const { weight: firstWeight, brandName: firstBrandName, packSize: firstPackSize } = getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(pTitle);
-    const normalizedTitle0 = normalizeTitle(pTitle, firstBrandName, firstPackSize, firstWeight);
+    let normalizedTitle0 = normalizeTitle(pTitle, firstBrandName, firstPackSize, firstWeight);
     
     for(let product of products){
         product= product.toObject();
         const { weight:w2, brandName:b2, packSize:p2 } = getSimilarProducts_DiffShop_ProductType_Weights_Brand_productPrice(product.productTitle);
-        const normalizedTitle = normalizeTitle(product.productTitle, b2, p2, w2);        
-        // product.productTitle=product.productTitle.replace(" |",'');
+        let normalizedTitle = normalizeTitle(product.productTitle, b2, p2, w2);        
         let matched= compareTitlesAndGetPercentage(normalizedTitle0, normalizedTitle);
         product.matched=matched.toFixed(2);
-        if(matched>=0){            
-            filteredProducts.push(product)
-        }
+        // if(matched>=0){            
+        //     filteredProducts.push(product)
+        // }
+        //////////////////////////////
+        if (matched >= 50) {
+            if (normalizedTitle0.length < normalizedTitle.length) {
+                // Remove extra words in normalizedTitle that don't match normalizedTitle0
+                let words0 = new Set(tokenizeTitle(normalizedTitle0));
+                let words1 = tokenizeTitle(normalizedTitle);
+                normalizedTitle = words1.filter(word => words0.has(word)).join(" ");
+            } 
+            else if (normalizedTitle0.length > normalizedTitle.length) {
+                // Add missing words from normalizedTitle0 into normalizedTitle
+                let words0 = tokenizeTitle(normalizedTitle0);
+                let words1 = new Set(tokenizeTitle(normalizedTitle));
+                let missingWords = words0.filter(word => !words1.has(word));
+                normalizedTitle += " " + missingWords.join(" ");
+            }
+    
+            // Recalculate matching percentage
+            matched = compareTitlesAndGetPercentage(normalizedTitle0, normalizedTitle);
+            product.matched = matched.toFixed(2);
+            if(matched===100){
+                filteredProducts.push(product);
+            }
+            
+        }        
+        ///////////////////////////////        
     }
 
     return { 
